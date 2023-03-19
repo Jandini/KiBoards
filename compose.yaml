@@ -19,13 +19,10 @@ services:
       - ELASTICSEARCH_HOSTS=http://kiboards-elastic:9200
       - TELEMETRY_ENABLED=false
     ports:
-      - 80:5601
+      - 5601:5601
     networks:
       - kiboards-network
 
 networks:
   kiboards-network: 
     name: kiboards-network
-    
-    
-      
