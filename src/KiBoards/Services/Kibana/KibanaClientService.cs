@@ -46,11 +46,10 @@
 
                     break;
                 }
-                catch (Exception)
+                catch (Exception ex)
                 {
-                    _logger.LogWarning("Kibana status is {level}", level);
-                    _logger.LogInformation("Next retry in {ms} seconds", delay.TotalSeconds);
-
+                    _logger.LogDebug(ex, "Waiting for Kibana");
+                    _logger.LogWarning("Kibana status is {level}, next retry in {seconds} seconds", level, delay.TotalSeconds);
                     await Task.Delay(delay, cancellationToken);
                 }
             }
