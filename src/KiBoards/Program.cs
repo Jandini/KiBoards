@@ -1,8 +1,8 @@
 // Created with JandaBox http://github.com/Jandini/JandaBox
 using AutoMapper;
 using Serilog;
-using KiBoards.Services;
 using System.Reflection;
+using KiBoards.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -45,6 +45,8 @@ builder.Services.AddSwaggerGen(
         ? type.Name[..^3]
         : type.Name));
 
+// Add kibana services
+builder.Services.AddKibana();
 
 var app = builder.Build();
 

@@ -9,6 +9,7 @@ services:
       - cluster.name=kiboards
       - discovery.type=single-node
       - xpack.security.enabled=false      
+      #- xpack.apm.enabled=false
     networks:
       - kiboards-network
 
