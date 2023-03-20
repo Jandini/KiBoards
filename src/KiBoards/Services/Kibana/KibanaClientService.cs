@@ -25,18 +25,20 @@
         public async Task WaitForKibanaAsync(CancellationToken cancellationToken)
         {
             var level = "unknown";
+            var delay = TimeSpan.FromMilliseconds(_configuration.GetValue("Kibana:RetryDelayMs", 10000));
+
             _logger.LogInformation("Waiting for Kibana {uri}", _client.BaseAddress);
 
             while (!cancellationToken.IsCancellationRequested) 
             {
                 try
-                {
+                {                    
                     var response = await _client.GetFromJsonAsync<KibanaStatusResponse>("api/status", cancellationToken);
                     level = response?.Status?.Overall?.Level ?? throw new Exception("Kibana status is not available.");
 
                     if (level != "available")
-                        throw new Exception($"Kibana status is {level}.");
-
+                        throw new Exception("Kibana not available.");
+                    
                     _logger.LogInformation("Kibana name: {name}", response.Name);
                     _logger.LogInformation("Kibana version: {version}", response.Version?.Number);
                     _logger.LogInformation("Kibana status level: {status}", level);
@@ -44,12 +46,10 @@
 
                     break;
                 }
-                catch (Exception ex)
+                catch (Exception)
                 {
-                    _logger.LogWarning(ex, "Kibana status is {level}", level);
-                    
-                    var delay = _configuration.GetValue("Kibana:RetryDelayMs", 10000);
-                    _logger.LogInformation("Retry in {ms} milliseconds", delay);
+                    _logger.LogWarning("Kibana status is {level}", level);
+                    _logger.LogInformation("Next retry in {ms} seconds", delay.TotalSeconds);
 
                     await Task.Delay(delay, cancellationToken);
                 }
