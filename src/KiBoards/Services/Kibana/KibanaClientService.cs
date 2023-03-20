@@ -1,4 +1,6 @@
-﻿namespace KiBoards.Services
+﻿using System.Text;
+
+namespace KiBoards.Services
 {
     public class KibanaClientService : IKibanaClientService
     {
@@ -19,8 +21,9 @@
         {
             var darkMode = _configuration.GetValue("Kibana:Theme:DarkMode", false).ToString().ToLower();
             _logger.LogInformation("Setting theme:darkMode={darkMode}", darkMode);
-            var content = $"{{\"changes\":{{\"theme:darkMode\":{darkMode}}}}}";
-            await _client.PostAsJsonAsync("api/kibana/settings", content, cancellationToken);
+            var content = new StringContent($"{{\"changes\":{{\"theme:darkMode\":{darkMode}}}}}", Encoding.UTF8, "application/json");
+            content.Headers.Add("kbn-xsrf", "true");
+            await _client.PostAsync("api/kibana/settings", content, cancellationToken);
         }
 
         public async Task WaitForKibanaAsync(CancellationToken cancellationToken)
