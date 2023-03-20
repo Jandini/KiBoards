@@ -2,11 +2,15 @@
 {
     public static class KibanaExtensions
     {
-        public static IServiceCollection AddKibana(this IServiceCollection services)
+        public static IServiceCollection AddKibana(this IServiceCollection services, IConfiguration configuration)
         {
-            return services
-                .AddTransient<IKibanaClientService, KibanaClientService>()
-                .AddHostedService<KibanaHostedService>();
+            services
+                .AddTransient<KibanaDelegatingHandler>()
+                .AddHttpClient<IKibanaClientService, KibanaClientService>()
+                    .ConfigureHttpClient(c => c.BaseAddress = configuration.GetValue<Uri>("Kibana:Uri"))
+                    .AddHttpMessageHandler<KibanaDelegatingHandler>();
+
+            return services.AddHostedService<KibanaHostedService>();
         }
     }
 }

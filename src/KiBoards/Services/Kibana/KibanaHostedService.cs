@@ -40,7 +40,6 @@
             _logger.LogInformation("Kibana hosted service started");
 
             return Task.CompletedTask;
-
         }
 
         public Task StopAsync(CancellationToken cancellationToken)

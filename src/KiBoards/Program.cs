@@ -37,6 +37,7 @@ builder.Services.AddControllers()
 // Add http client
 builder.Services.AddHttpClient();
 
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(
@@ -46,7 +47,7 @@ builder.Services.AddSwaggerGen(
         : type.Name));
 
 // Add kibana services
-builder.Services.AddKibana();
+builder.Services.AddKibana(builder.Configuration);
 
 var app = builder.Build();
 
