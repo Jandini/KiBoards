@@ -1,0 +1,42 @@
+name: Docker Image CI
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+    DOTNET_CLI_TELEMETRY_OPTOUT: 1   
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:    
+    - uses: actions/checkout@v3
+      with: 
+        fetch-depth: 0
+    - name: Setup
+      uses: actions/setup-dotnet@v1
+      with:
+        dotnet-version: 7.0.x
+    - name: Run GitVersion
+      run: |  
+        dotnet tool install --global GitVersion.Tool
+        dotnet gitversion /output buildserver 
+    - name: Publish
+      working-directory: src
+      run: dotnet publish -nologo --configuration Release --runtime linux-x64 --no-self-contained -p:OutputType=Exe -p:DebugOutput=None
+    - name: Log in to Docker Hub
+      uses: docker/login-action@v2
+      with:
+        username: ${{ secrets.DOCKERHUB_USERNAME }}
+        password: ${{ secrets.DOCKERHUB_PASSWORD }}        
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
+    - name: Build and push
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        file: ./Dockerfile.production
+        push: true
+        tags: ${{ secrets.DOCKERHUB_USERNAME }}/kiboards:latest, ${{ secrets.DOCKERHUB_USERNAME }}/kiboards:${{ env.GitVersion_SemVer }}
+        
