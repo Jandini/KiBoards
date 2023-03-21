@@ -1,4 +1,6 @@
-﻿namespace KiBoards.Services
+﻿using Microsoft.Extensions.Configuration;
+
+namespace KiBoards.Services
 {
     public class KibanaClientService : IKibanaClientService
     {
@@ -25,7 +27,7 @@
         public async Task WaitForKibanaAsync(CancellationToken cancellationToken)
         {
             var level = "unknown";
-            var delay = TimeSpan.FromMilliseconds(_configuration.GetValue("Kibana:RetryDelayMs", 10000));
+            var delay = TimeSpan.FromMilliseconds(_configuration.GetValue("Kibana:Client:RequestRetryDelay", 5000));
 
             _logger.LogInformation("Waiting for Kibana {uri}", _client.BaseAddress);
 
@@ -49,7 +51,7 @@
                 catch (Exception ex)
                 {
                     _logger.LogDebug(ex, "Waiting for Kibana");
-                    _logger.LogWarning("Kibana status is {level}, next retry in {seconds} seconds", level, delay.TotalSeconds);
+                    _logger.LogWarning("Kibana status is {level}, next retry in {ms}ms", level, delay.TotalMilliseconds);
                     await Task.Delay(delay, cancellationToken);
                 }
             }
