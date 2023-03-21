@@ -9,6 +9,7 @@ services:
       - cluster.name=kiboards
       - discovery.type=single-node
       - xpack.security.enabled=false      
+      #- xpack.apm.enabled=false
     networks:
       - kiboards-network
 
@@ -19,13 +20,10 @@ services:
       - ELASTICSEARCH_HOSTS=http://kiboards-elastic:9200
       - TELEMETRY_ENABLED=false
     ports:
-      - 80:5601
+      - 5601:5601
     networks:
       - kiboards-network
 
 networks:
   kiboards-network: 
     name: kiboards-network
-    
-    
-      
