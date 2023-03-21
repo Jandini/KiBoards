@@ -1,6 +1,4 @@
-﻿using Microsoft.Extensions.Configuration;
-
-namespace KiBoards.Services
+﻿namespace KiBoards.Services
 {
     public class KibanaClientService : IKibanaClientService
     {
