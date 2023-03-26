@@ -1,0 +1,10 @@
+FROM mcr.microsoft.com/dotnet/aspnet:7.0
+WORKDIR /app
+EXPOSE 80
+EXPOSE 443
+
+ARG PUBLISH_DIR
+COPY ${PUBLISH_DIR} .
+
+ARG ENTRYPOINT_DLL
+ENTRYPOINT ["dotnet", "${ENTRYPOINT_DLL}"]

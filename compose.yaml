@@ -8,8 +8,8 @@ services:
     environment:
       - cluster.name=kiboards
       - discovery.type=single-node
-      - xpack.security.enabled=false      
-      #- xpack.apm.enabled=false
+      - xpack.security.enabled=false
+
     networks:
       - kiboards-network
 
@@ -26,4 +26,4 @@ services:
 
 networks:
   kiboards-network: 
-    name: kiboards-network
+    name: kiboards-network    
