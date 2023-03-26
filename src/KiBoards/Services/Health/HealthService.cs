@@ -15,7 +15,7 @@ namespace KiBoards.Services
         {
             var info = new HealthInfo
             {
-                Service = new HealthDetails()
+                Service = new ServiceDetails()
                 {
                     Name = _configuration.GetValue("APPLICATION_NAME", Assembly.GetExecutingAssembly().GetName().Name),
                     Version = _configuration.GetValue("APPLICATION_VERSION", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion)

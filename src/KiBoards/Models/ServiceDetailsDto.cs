@@ -1,6 +1,6 @@
-﻿namespace KiBoards.Services
+﻿namespace KiBoards.Models
 {
-    public class HealthDetails
+    public class ServiceDetailsDto
     {
         public string? Name { get; set; }
         public string? Version { get; set; }

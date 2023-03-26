@@ -6,7 +6,7 @@ namespace KiBoards.Profiles
     {
         public HealthProfile()
         {
-            CreateMap<Services.HealthDetails, Models.HealthDetailsDto>();
+            CreateMap<Services.ServiceDetails, Models.ServiceDetailsDto>();
             CreateMap<Services.HealthInfo, Models.HealthInfoDto>();
         }
     }
