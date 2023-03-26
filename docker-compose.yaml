@@ -8,8 +8,8 @@ services:
     environment:
       - cluster.name=kiboards
       - discovery.type=single-node
-      - xpack.security.enabled=false      
-      #- xpack.apm.enabled=false
+      - xpack.security.enabled=false
+
     networks:
       - kiboards-network
 
@@ -24,6 +24,18 @@ services:
     networks:
       - kiboards-network
 
+  kiboards-service:
+    container_name: kiboards-service
+    image: jandini/kiboards
+    environment:            
+      - ELASTICSEARCH_URI=http://kiboards-elastic:9200
+      - KIBANA__URI=http://kiboards-kibana:5601
+      - ASPNETCORE_ENVIRONMENT=Development 
+    ports:
+      - 8089:80
+    networks:
+      - kiboards-network
+
 networks:
   kiboards-network: 
-    name: kiboards-network
+    name: kiboards-network    

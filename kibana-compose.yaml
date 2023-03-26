@@ -1,0 +1,29 @@
+services:
+  kiboards-elastic:
+    container_name: kiboards-elastic
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.6.2
+    ports:
+      - "9200:9200"
+      - "9300:9300"
+    environment:
+      - cluster.name=kiboards
+      - discovery.type=single-node
+      - xpack.security.enabled=false
+
+    networks:
+      - kiboards-network
+
+  kiboards-kibana:
+    container_name: kiboards-kibana
+    image: docker.elastic.co/kibana/kibana:8.6.2
+    environment:            
+      - ELASTICSEARCH_HOSTS=http://kiboards-elastic:9200
+      - TELEMETRY_ENABLED=false
+    ports:
+      - 5601:5601
+    networks:
+      - kiboards-network
+
+networks:
+  kiboards-network: 
+    name: kiboards-network    
