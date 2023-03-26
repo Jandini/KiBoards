@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using KiBoards.Services;
 
 namespace KiBoards.Profiles
 {
@@ -7,7 +6,8 @@ namespace KiBoards.Profiles
     {
         public HealthProfile()
         {
-            CreateMap<HealthInfo, Models.HealthInfoDto>();
+            CreateMap<Services.HealthDetails, Models.HealthDetailsDto>();
+            CreateMap<Services.HealthInfo, Models.HealthInfoDto>();
         }
     }
 }

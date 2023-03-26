@@ -25,16 +25,9 @@ namespace KiBoards.Controllers
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<HealthInfoDto>> GetHealthInfoAsync()
         {
-            try
-            {
-                _logger.LogDebug("Getting health info");
-                var healthInfo = await _healthService.GetHealthInfoAsync(Request);
-                return Ok(_mapper.Map<HealthInfoDto>(healthInfo));
-            }
-            catch (Exception ex)
-            {
-                return BadRequest(ex);
-            }
+            _logger.LogDebug("Getting health info");
+            var healthInfo = await _healthService.GetHealthInfoAsync();
+            return Ok(_mapper.Map<HealthInfoDto>(healthInfo));
         }
     }
 }

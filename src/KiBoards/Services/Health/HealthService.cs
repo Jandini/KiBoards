@@ -4,16 +4,22 @@ namespace KiBoards.Services
 {
     public class HealthService : IHealthService
     {
-        public async Task<HealthInfo> GetHealthInfoAsync(HttpRequest request)
-        {
-            var assembly = Assembly.GetExecutingAssembly();
-            var version = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+        private readonly IConfiguration _configuration;
 
+        public HealthService(IConfiguration configuration)
+        {
+            _configuration = configuration;
+        }
+
+        public async Task<HealthInfo> GetHealthInfoAsync()
+        {
             var info = new HealthInfo
             {
-                ServiceName = assembly.GetName().Name,
-                ServiceVersion = version,
-                ServiceHost = request.Host.ToString()
+                Service = new HealthDetails()
+                {
+                    Name = _configuration.GetValue("APPLICATION_NAME", Assembly.GetExecutingAssembly().GetName().Name),
+                    Version = _configuration.GetValue("APPLICATION_VERSION", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion)
+                }
             };
 
             return await Task.FromResult(info);
