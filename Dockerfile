@@ -3,8 +3,6 @@ WORKDIR /app
 EXPOSE 80
 EXPOSE 443
 
-ARG PUBLISH_DIR
-COPY ${PUBLISH_DIR} .
+COPY src/KiBoards/bin/Release/net7.0/linux-x64/publish .
 
-ARG ENTRYPOINT_DLL
-ENTRYPOINT ["dotnet", "${ENTRYPOINT_DLL}"]
+ENTRYPOINT ["dotnet", "KiBoards.dll"]
