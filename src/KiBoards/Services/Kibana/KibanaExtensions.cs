@@ -26,7 +26,7 @@ namespace KiBoards.Services
                               retryAttempt, retryCount, timespan.Seconds);
                       }))
                   
-                    .ConfigureHttpClient(c => c.BaseAddress = configuration.GetValue<Uri>("Kibana:Uri"))
+                    .ConfigureHttpClient(c => c.BaseAddress = configuration.GetValue<Uri>("KIBANA_URI"))
                     .AddHttpMessageHandler<KibanaDelegatingHandler>();
 
             return serviceCollection.AddHostedService<KibanaHostedService>();

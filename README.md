@@ -3,8 +3,6 @@
 [![Docker Image CI](https://github.com/Jandini/KiBoards/actions/workflows/docker-image.yml/badge.svg)](https://github.com/Jandini/KiBoards/actions/workflows/docker-image.yml)
 
 Elasticsearch logging and dashboards service for Kibana 8.6.2
-Created from [JandaBox](https://github.com/Jandini/JandaBox).
-
 
 
 ## Quick Start
@@ -30,7 +28,7 @@ docker compose -f kibana-compose.yaml up --force-recreate
 
 Run KiBoards with `docker-run.ps1` script or use following command.
 ```sh
-docker run --network kiboards-network -p 8089:80 -it -e ELASTICSEARCH_URI=http://kiboards-elastic:9200 -e ASPNETCORE_ENVIRONMENT=Development --rm jandini/kiboards:latest
+docker run --network kiboards-network -p 8089:80 -it -e KIBANA__URI=http://kiboards-kibana:5601 -e ELASTICSEARCH_URI=http://kiboards-elastic:9200 -e ASPNETCORE_ENVIRONMENT=Development --rm jandini/kiboards:latest
 ```
 
 
@@ -52,26 +50,22 @@ The repository consist of number of files
 
 
 
-
-
 ## Troubleshooting
 
-### Docker Desktop returns `open //./pipe/docker_engine: The system cannot find the file specified.` error.
+#### Docker daemon throws error 
 
-Running `docker` command results with:
+Docker Desktop returns `open //./pipe/docker_engine: The system cannot find the file specified.` error or running `docker` command results with:
 
 ```
 error during connect: In the default daemon configuration on Windows, the docker client must be run with elevated privileges to connect.: Post "http://%2F%2F.%2Fpipe%2Fdocker_engine/v1.24/build": open //./pipe/docker_engine: The system cannot find the file specified.
 ```
 
-Docker Desktop is not running or your are running `docker` command without administrator privileges. 
+Check if Docker Desktop is running and if your are running `docker` command with administrator privileges. 
 Use `docker-start.ps1` to start docker desktop.  Ensure you have privileges to run `docker` command. 
 
 
 
 
 
-
-
-
-
+---
+Created from [JandaBox](https://github.com/Jandini/JandaBox)
