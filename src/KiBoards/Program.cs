@@ -75,7 +75,8 @@ builder.Services.AddSwaggerGen(options =>
     // Update application title on Swagger UI web page for v1
     options.SwaggerDoc("v1", new OpenApiInfo()
     {
-        Title = appName
+        Title = appName,
+        Version = "1.0"
     });
 });
 
