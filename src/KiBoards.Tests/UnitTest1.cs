@@ -1,5 +1,7 @@
 using KiBoards.Xunit;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
+using Serilog;
 using Xunit.Abstractions;
 
 namespace KiBoards.Tests
@@ -25,7 +27,18 @@ namespace KiBoards.Tests
 
             _harness.Run<UnitTest1>((services, logger) =>
             {
-                logger.LogInformation("Test1");                
+                logger.LogInformation("Log this message only to Elasticsearch");
+
+                var factory = services.GetRequiredService<ILoggerFactory>();
+
+                factory
+                    .AddSerilog(new LoggerConfiguration()
+                    .Enrich.WithMachineName()
+                    .WriteTo.Console()
+                    .WriteTo.File("TestLog.log")
+                    .CreateLogger(), dispose: true);
+
+                logger.LogInformation("Log this message to both Elasticsearch and file");
                 throw new Exception("Something went wrong.");
             });
         }
