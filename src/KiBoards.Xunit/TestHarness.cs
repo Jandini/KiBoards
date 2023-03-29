@@ -9,21 +9,21 @@ using Xunit.Abstractions;
 
 namespace KiBoards.Xunit
 {
-    public class KiBoardsTestFixture
+    public class TestHarness
     {
-        private readonly TestBuilderFixture _builder;
+        private readonly TestBuilder _builder;
         private ITestOutputHelper? _output;
 
-        public KiBoardsTestFixture() 
+        public TestHarness() 
         {
-            _builder = new TestBuilderFixture();
+            _builder = new TestBuilder();
             _builder.Configuration
                 .AddEnvironmentVariables()
                 .SetBasePath(Directory.GetCurrentDirectory())
                 .AddJsonFile("appsettings.json");
         }
 
-        internal void SetOutputHelper(ITestOutputHelper output)
+        public void SetOutputHelper(ITestOutputHelper output)
         {
             _output = output;
         }
@@ -31,20 +31,26 @@ namespace KiBoards.Xunit
         public IServiceCollection AddServices() => _builder.Services;
 
 
-        public void Run<T>(Action<IServiceProvider, ILogger<T>> runTest, [CallerMemberName] string memberName = "")  
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="runTest"></param>
+        /// <param name="method">Test method name. Leave empty to generate it.</param>
+        public void Run<T>(Action<IServiceProvider, ILogger<T>> runTest, [CallerMemberName] string method = "")  
         {
             var config = _builder.Configuration.Build();
 
             var elasticOptions = new ElasticsearchSinkOptions(config.GetValue<Uri>("ELASTICSEARCH_URI"))
             {
-                IndexFormat = Regex.Replace($"{typeof(T)}-kilogs-{Environment.MachineName}-{DateTime.UtcNow:yyyy-MM}".ToLower(), "[\\\\/\\*\\?\"<>\\|#., ]", "-"),
+                IndexFormat = Regex.Replace($"{typeof(T)}-logs-{Environment.MachineName}-{DateTime.UtcNow:yyyy-MM}".ToLower(), "[\\\\/\\*\\?\"<>\\|#., ]", "-"),
                 AutoRegisterTemplate = true,
                 ModifyConnectionSettings = _output == null ? null : config => config.OnRequestCompleted(d => _output?.WriteLine(d.DebugInformation))
             };
             
             _builder.Services.AddLogging(builder => builder.AddSerilog(new LoggerConfiguration()
                 .WriteTo.Elasticsearch(elasticOptions)
-                .Enrich.WithProperty("MemberName", memberName)
+                .Enrich.WithProperty("Method", method)
                 .Enrich.WithMachineName()
                 .CreateLogger(), true));
 
@@ -56,8 +62,8 @@ namespace KiBoards.Xunit
                 runTest(provider, logger);
             }
             catch (Exception ex)
-            {
-                logger.LogError(ex, $"Test failed.");
+            {                
+                logger.LogError(ex, $"Test failed.");                
                 throw;
             }
         }

@@ -5,7 +5,12 @@ VisualStudioVersion = 17.4.33403.182
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards", "KiBoards\KiBoards.csproj", "{D31388FE-9673-4EE3-AF2E-78C26201BE38}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiBoards.Xunit", "KiBoards.Xunit\KiBoards.Xunit.csproj", "{C0FC409D-82CF-481E-A759-45A57BA215E1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards.Tests", "KiBoards.Tests\KiBoards.Tests.csproj", "{C0FC409D-82CF-481E-A759-45A57BA215E1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{32E76786-76AE-48D0-83AA-395867E2E2D9} = {32E76786-76AE-48D0-83AA-395867E2E2D9}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiBoards.Xunit", "KiBoards.Xunit\KiBoards.Xunit.csproj", "{32E76786-76AE-48D0-83AA-395867E2E2D9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +26,10 @@ Global
 		{C0FC409D-82CF-481E-A759-45A57BA215E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C0FC409D-82CF-481E-A759-45A57BA215E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C0FC409D-82CF-481E-A759-45A57BA215E1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{32E76786-76AE-48D0-83AA-395867E2E2D9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{32E76786-76AE-48D0-83AA-395867E2E2D9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{32E76786-76AE-48D0-83AA-395867E2E2D9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{32E76786-76AE-48D0-83AA-395867E2E2D9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
