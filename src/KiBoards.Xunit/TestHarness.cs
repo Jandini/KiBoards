@@ -64,7 +64,7 @@ namespace KiBoards.Xunit
             }
             catch (Exception ex)
             {
-                logger.LogError(ex, $"{typeof(T)} failed");  
+                logger.LogError(ex, $"{typeof(T)}.{method} failed");  
                 throw;
             }
         }
