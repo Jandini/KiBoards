@@ -45,11 +45,12 @@ namespace KiBoards.Xunit
             {
                 IndexFormat = Regex.Replace($"{typeof(T)}-logs-{Environment.MachineName}-{DateTime.UtcNow:yyyy-MM}".ToLower(), "[\\\\/\\*\\?\"<>\\|#., ]", "-"),
                 AutoRegisterTemplate = true,
-                ModifyConnectionSettings = _output == null ? null : config => config.OnRequestCompleted(d => _output?.WriteLine(d.DebugInformation))
+                ModifyConnectionSettings = _output == null ? null : config => config.OnRequestCompleted(d => _output?.WriteLine(d.DebugInformation)),
             };
             
             _builder.Services.AddLogging(builder => builder.AddSerilog(new LoggerConfiguration()
-                .WriteTo.Elasticsearch(elasticOptions)
+                .WriteTo.Elasticsearch(options: elasticOptions)
+                .Enrich.WithProperty("ApplicationName", typeof(T).Assembly.GetName().Name)
                 .Enrich.WithProperty("Method", method)
                 .Enrich.WithMachineName()
                 .CreateLogger(), true));
@@ -62,8 +63,8 @@ namespace KiBoards.Xunit
                 runTest(provider, logger);
             }
             catch (Exception ex)
-            {                
-                logger.LogError(ex, $"Test failed.");                
+            {
+                logger.LogError(ex, $"{typeof(T)} failed");  
                 throw;
             }
         }

@@ -22,15 +22,16 @@ namespace KiBoards.Tests
 
         [Fact]
         public void Test1()
-        {            
+        {
             _harness.AddServices();
 
             _harness.Run<UnitTest1>((services, logger) =>
             {
                 logger.LogInformation("Log this message only to Elasticsearch");
 
-                var factory = services.GetRequiredService<ILoggerFactory>();
 
+                logger.LogWarning("Adding new file logger");
+                var factory = services.GetRequiredService<ILoggerFactory>();
                 factory
                     .AddSerilog(new LoggerConfiguration()
                     .Enrich.WithMachineName()
@@ -39,7 +40,16 @@ namespace KiBoards.Tests
                     .CreateLogger(), dispose: true);
 
                 logger.LogInformation("Log this message to both Elasticsearch and file");
-                throw new Exception("Something went wrong.");
+
+                try
+                {
+                    throw new Exception("Something went wrong.");
+                }
+                catch (Exception ex)
+                {
+                    logger.LogError(ex, "Failed.");
+                    throw;
+                }
             });
         }
 
