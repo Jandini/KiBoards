@@ -13,9 +13,13 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
     using Microsoft.VisualStudio.TestPlatform.ObjectModel;
     using Spekt.TestLogger.Core;
     using Spekt.TestLogger.Utilities;
+    using Serilog;
+    using LoggerConfiguration = Spekt.TestLogger.Core.LoggerConfiguration;
 
     public class XunitXmlSerializer : ITestResultSerializer
     {
+        public ILogger _logger;
+
         public const string EnvironmentKey = "Environment";
         public const string XUnitVersionKey = "XUnitVersion";
 
@@ -26,7 +30,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
             "Test Class Cleanup Failure",
             "Test Case Cleanup Failure",
             "Test Cleanup Failure",
-            "Test Method Cleanup Failure"
+            "Test Method Cleanup Failure",
         };
 
         private static Dictionary<string, string> errorTypeKeyValuePair = new Dictionary<string, string>
@@ -36,8 +40,17 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
             { "Test Class Cleanup Failure", "test-class-cleanup" },
             { "Test Case Cleanup Failure", "test-case-cleanup" },
             { "Test Cleanup Failure", "test-cleanup" },
-            { "Test Method Cleanup Failure", "test-method-cleanup" }
+            { "Test Method Cleanup Failure", "test-method-cleanup" },
         };
+
+        public XunitXmlSerializer()
+        {
+            // Create serilog logger
+            _logger = new Serilog.LoggerConfiguration()
+                .WriteTo.File("XunitXmlSerializer.log")
+                .CreateLogger()
+                .ForContext<XunitXmlSerializer>();
+        }
 
         public string Serialize(
             LoggerConfiguration loggerConfiguration,
@@ -45,6 +58,11 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
             List<TestResultInfo> results,
             List<TestMessageInfo> messages)
         {
+            _logger.Information("{@LoggerConfiguration}", loggerConfiguration);
+            _logger.Information("{@TestRunConfiguration}", runConfiguration);
+            _logger.Information("{@results}", results);            
+            _logger.Information("{@messages}", messages);
+
             var doc = new XDocument(CreateAssembliesElement(results, loggerConfiguration, runConfiguration));
             return doc.ToString();
         }
