@@ -17,7 +17,7 @@ namespace KiBoards.Tests
             _harness = builder;
             _output = output;
 
-            _harness.SetOutputHelper(_output);
+            // _harness.SetOutputHelper(_output);
         }
 
         [Fact]
