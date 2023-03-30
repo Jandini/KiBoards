@@ -15,6 +15,10 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
     using Spekt.TestLogger.Utilities;
     using Serilog;
     using LoggerConfiguration = Spekt.TestLogger.Core.LoggerConfiguration;
+    using Serilog.Sinks.Elasticsearch;
+    using System.Text.RegularExpressions;
+    using Serilog.Formatting.Json;
+    using Serilog.Sinks.File;
 
     public class XunitXmlSerializer : ITestResultSerializer
     {
@@ -45,9 +49,32 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
 
         public XunitXmlSerializer()
         {
+
+            var elasticOptions = new ElasticsearchSinkOptions(new Uri("http://localhost:9200/"))
+            {
+                IndexFormat = Regex.Replace($"testresults-logs-{Environment.MachineName}-{DateTime.UtcNow:yyyy-MM}".ToLower(), "[\\\\/\\*\\?\"<>\\|#., ]", "-"),
+                AutoRegisterTemplate = true,
+                ModifyConnectionSettings = config => config.OnRequestCompleted(d => Console.WriteLine(d.DebugInformation)),
+                FailureCallback = e => Console.WriteLine("Unable to submit event " + e.MessageTemplate),
+                EmitEventFailure = EmitEventFailureHandling.WriteToSelfLog |
+                                       EmitEventFailureHandling.WriteToFailureSink |
+                                       EmitEventFailureHandling.RaiseCallback,
+                FailureSink = new FileSink("failures.txt", new JsonFormatter(), null)
+            };
+
+            // Elasticsearch index name must not be longer than 255 characters
+            if (elasticOptions.IndexFormat.Length > 255)
+                throw new Exception("Elasticsearch index name exceeds 255 characters.");
+            else
+                Console.WriteLine(elasticOptions.IndexFormat);
+
+            Console.WriteLine("Creating logger...");
             // Create serilog logger
             _logger = new Serilog.LoggerConfiguration()
-                .WriteTo.File("XunitXmlSerializer.log")
+                .MinimumLevel.Verbose()
+                //.WriteTo.File("XunitXmlSerializere.log")
+                .WriteTo.Elasticsearch(elasticOptions)
+                .Enrich.WithMachineName()
                 .CreateLogger()
                 .ForContext<XunitXmlSerializer>();
         }
@@ -58,12 +85,19 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
             List<TestResultInfo> results,
             List<TestMessageInfo> messages)
         {
+            Console.WriteLine("Logging...");
             _logger.Information("{@LoggerConfiguration}", loggerConfiguration);
             _logger.Information("{@TestRunConfiguration}", runConfiguration);
             _logger.Information("{@results}", results);            
             _logger.Information("{@messages}", messages);
+            Console.WriteLine("Done");
+
+
 
             var doc = new XDocument(CreateAssembliesElement(results, loggerConfiguration, runConfiguration));
+
+//            Log.CloseAndFlush();
+
             return doc.ToString();
         }
 
