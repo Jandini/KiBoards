@@ -50,7 +50,7 @@ namespace KiBoards.Xunit
             
             _builder.Services.AddLogging(builder => builder.AddSerilog(new LoggerConfiguration()
                 .WriteTo.Elasticsearch(options: elasticOptions)
-                .Enrich.WithProperty("ApplicationName", typeof(T).Assembly.GetName().Name)
+                .Enrich.WithProperty("ApplicationName", typeof(T).Assembly.GetName().Name!)
                 .Enrich.WithProperty("Method", method)
                 .Enrich.WithMachineName()
                 .CreateLogger(), true));
