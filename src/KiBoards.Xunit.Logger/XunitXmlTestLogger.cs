@@ -18,7 +18,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
         /// <summary>
         /// Alternate user friendly string to uniquely identify the console logger.
         /// </summary>
-        public const string FriendlyName = "kiboards";
+        public const string FriendlyName = "xunit";
 
         public XunitXmlTestLogger()
             : base(new XunitXmlSerializer())
