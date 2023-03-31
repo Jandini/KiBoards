@@ -23,6 +23,7 @@ namespace Microsoft.VisualStudio.TestPlatform.Extension.Xunit.Xml.TestLogger
         public XunitXmlTestLogger()
             : base(new XunitXmlSerializer())
         {
+            // https://github.com/Microsoft/vstest/blob/main/src/vstest.console/Internal/ConsoleLogger.cs
         }
 
         protected override string DefaultTestResultFile => "TestResults.xml";
