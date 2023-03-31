@@ -1,11 +1,12 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using System;
 
 namespace KiBoards.Xunit
 {
     public class TestBuilder : IDisposable
     {
-        private ServiceProvider? _serviceProvider;
+        private ServiceProvider _serviceProvider;
         public IServiceCollection Services { get; private set; }
         public IConfigurationBuilder Configuration { get; private set; }
 

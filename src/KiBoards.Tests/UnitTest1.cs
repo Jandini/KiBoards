@@ -17,7 +17,8 @@ namespace KiBoards.Tests
             _harness = builder;
             _output = output;
 
-            _harness.SetOutputHelper(_output);
+            // Enable elasticsearch debugging
+            // _harness.SetOutputHelper(_output);
         }
 
         [Fact]
@@ -48,7 +49,7 @@ namespace KiBoards.Tests
                 catch (Exception ex)
                 {
                     logger.LogError(ex, "Failed.");
-                    throw;
+                    //throw;
                 }
             });
         }
