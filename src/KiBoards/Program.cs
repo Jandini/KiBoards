@@ -24,9 +24,12 @@ var elasticOptions = new ElasticsearchSinkOptions(builder.Configuration.GetValue
     // Ensure index name meet the following criteria https://www.elastic.co/guide/en/elasticsearch/reference/current/indices-create-index.html
     IndexFormat = Regex.Replace($"{appName}-logs-{builder.Environment.EnvironmentName}-{DateTime.UtcNow:yyyy-MM}".ToLower(), "[\\\\/\\*\\?\"<>\\|#., ]", "-"),
     AutoRegisterTemplate = true,
-    // Set environemnt variable ELASTICSEARCH_DEBUG=true do debug elasticsearch logging
-    ModifyConnectionSettings = !builder.Configuration.GetValue("ELASTICSEARCH_DEBUG", false) ? null : config => config.OnRequestCompleted(d => Console.WriteLine(d.DebugInformation))
 };
+
+// Set environemnt variable ELASTICSEARCH_DEBUG=true do debug elasticsearch logging
+if (builder.Configuration.GetValue("ELASTICSEARCH_DEBUG", false)) {
+    elasticOptions.ModifyConnectionSettings = config => config.OnRequestCompleted(d => Console.WriteLine(d.DebugInformation));
+}
 
 // Elasticsearch index name must not be longer than 255 characters
 if (elasticOptions.IndexFormat.Length > 255)

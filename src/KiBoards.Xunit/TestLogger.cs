@@ -18,6 +18,7 @@ namespace KiBoards.Xunit.Logger
         public void Initialize(TestLoggerEvents events, Dictionary<string, string> parameters)
         {
             events.TestRunComplete += TestRunComplete;
+            events.TestResult += TestResult;
         }
 
         public void Initialize(TestLoggerEvents events, string testRunDirectory)
@@ -27,7 +28,13 @@ namespace KiBoards.Xunit.Logger
 
         private void TestRunComplete(object sender, TestRunCompleteEventArgs e)
         {
-            Console.WriteLine($"ElapsedTimeInRunningTests: {e.ElapsedTimeInRunningTests}");
+            Console.WriteLine($"{e.ElapsedTimeInRunningTests}");
         }
+
+        private void TestResult(object sender, Microsoft.VisualStudio.TestPlatform.ObjectModel.Logging.TestResultEventArgs e)
+        {
+            Console.WriteLine($"{e.Result.DisplayName}\t{e.Result.Duration}\t{e.Result.Outcome}");
+        }
+
     }
 }
