@@ -4,7 +4,6 @@
 		<TargetFramework>netstandard2.1</TargetFramework>
 		<BaseOutputPath>..\..\bin</BaseOutputPath>
 		<ImplicitUsings>enable</ImplicitUsings>
-		<Nullable>enable</Nullable>
 		<LangVersion>10</LangVersion>
 	</PropertyGroup>
 
@@ -28,15 +27,16 @@
 	</PropertyGroup>
 
 	<ItemGroup>
-		<None Include="..\..\icon.png" Pack="true" PackagePath=""/>
+		<None Include="..\..\icon.png" Pack="true" PackagePath="" />
 		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
-		<None Include="..\..\README.md" Pack="true" PackagePath="\"/>
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
 	</ItemGroup>
 
 	<ItemGroup>
-		<PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
-			<PrivateAssets>all</PrivateAssets>
-			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-		</PackageReference>
+
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+    <PackageReference Include="NEST" Version="7.17.5" />
+    <PackageReference Include="xunit" Version="2.4.2" />
+
 	</ItemGroup>
 </Project>
