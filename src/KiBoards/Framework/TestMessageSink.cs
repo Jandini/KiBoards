@@ -7,14 +7,27 @@ namespace KiBoards.Framework
     {
         private IMessageSink _messageSink;
 
-        internal TestMessageSink(IMessageSink messageSink) 
+        internal TestMessageSink(IMessageSink messageSink)
         {
             _messageSink = messageSink;
         }
 
         private void LogMessage(string message)
         {
-            _messageSink.OnMessage(new DiagnosticMessage($"MessageSink: {message}"));
+            _messageSink.OnMessage(new DiagnosticMessage(message));
+        }
+
+        private void LogTestCase(string messageType, ITestCase testCase)
+        {
+            LogMessage($"{messageType}: TestCase.UniqueID: {testCase.UniqueID}");
+            LogMessage($"{messageType}: TestCase.DisplayName: {testCase.DisplayName}");
+            LogMessage($"{messageType}: TestCase.Traits.Count: {testCase.Traits.Count}");
+
+            if (testCase.SourceInformation != null)
+            {
+                LogMessage($"{messageType}: TestCase.SourceInformation.FileName: {testCase.SourceInformation.FileName}");
+                LogMessage($"{messageType}: TestCase.SourceInformation.LineNumber: {testCase.SourceInformation.LineNumber}");
+            }
         }
 
 
@@ -33,14 +46,18 @@ namespace KiBoards.Framework
                     break;
 
                 case ITestAssemblyStarting testAssemblyStarting:
-                    LogMessage(message.GetType().Name);
+                    LogMessage($"TestAssemblyStarting: StartTime: {testAssemblyStarting.StartTime}");
+                    LogMessage($"TestAssemblyStarting: TestFrameworkDisplayName: {testAssemblyStarting.TestFrameworkDisplayName}");
+                    LogMessage($"TestAssemblyStarting: TestEnvironment: {testAssemblyStarting.TestEnvironment}");
+                    LogMessage($"TestAssemblyStarting: TestCases.Count: {testAssemblyStarting.TestCases.Count()}");
                     break;
 
                 case ITestCollectionStarting testCollectionStarting:
-                    LogMessage(message.GetType().Name);
+                    LogMessage($"TestCollectionStarting: TestCollection.DisplayName: {testCollectionStarting.TestCollection.DisplayName}");
+                    LogMessage($"TestCollectionStarting: TestCollection.UniqueID: {testCollectionStarting.TestCollection.UniqueID}");
+                    LogMessage($"TestCollectionStarting: TestCollection.TestCases.Count: {testCollectionStarting.TestCases.Count()}");
+                    LogMessage($"TestCollectionStarting: TestAssembly.Assembly.Name: {testCollectionStarting.TestAssembly.Assembly.Name}");
                     break;
-
-
 
 
                 case ITestMethodStarting testMethodStarting:
@@ -61,7 +78,10 @@ namespace KiBoards.Framework
                     break;
 
                 case ITestClassConstructionStarting classConstructionStarting:
-                    // Code to handle Xunit.Sdk.TestClassConstructionStarting case
+                    LogMessage($"TestClassConstructionStarting: Test.DisplayName: {classConstructionStarting.Test.DisplayName}");
+                    LogMessage($"TestClassConstructionStarting: Test.TestCase.DisplayName: {classConstructionStarting.Test.TestCase.DisplayName}");
+                    LogMessage($"TestClassConstructionStarting: Test.TestCase.UniqueID: {classConstructionStarting.Test.TestCase.UniqueID}");
+                    LogMessage($"TestClassConstructionStarting: Test.TestCase.TestMethod.Method.Name: {classConstructionStarting.Test.TestCase.TestMethod.Method.Name}");
                     break;
 
                 case ITestClassConstructionFinished classConstructionFinished:
@@ -74,6 +94,13 @@ namespace KiBoards.Framework
                     break;
 
                 case ITestPassed testPassed:
+                    LogMessage($"TestPassed: Output: {testPassed.Output}");
+                    LogMessage($"TestPassed: ExcecutionTime: {testPassed.ExecutionTime}");
+                    LogMessage($"TestPassed: Test.DisplayName: {testPassed.Test.DisplayName}");
+                    LogMessage($"TestPassed: TestCase.UniqueID: {testPassed.TestCase.UniqueID}");
+                    LogMessage($"TestPassed: TestCase.DisplayName: {testPassed.TestCase.DisplayName}");
+                    LogMessage($"TestPassed: TestCases.Count: {testPassed.TestCases.Count()}");
+
                     // Code to handle Xunit.Sdk.TestPassed case
                     break;
 
@@ -95,6 +122,25 @@ namespace KiBoards.Framework
 
                 case ITestMethodFinished testMethodFinished:
                     // Code to handle Xunit.Sdk.TestMethodFinished case
+                    break;
+
+                case ITestClassStarting testClassStarting:
+                    break;
+
+                case ITestOutput TestOutput:
+                    break;
+
+                case ITestClassFinished testClassFinished:
+                    break;
+
+                case ITestCollectionFinished testCollectionFinished:
+                    break;
+
+                case ITestAssemblyFinished testAssemblyFinished:
+                    LogMessage($"TestAssemblyFinished: TestsRun: {testAssemblyFinished.TestsRun}");
+                    LogMessage($"TestAssemblyFinished: TestsFailed: {testAssemblyFinished.TestsFailed}");
+                    LogMessage($"TestAssemblyFinished: TestsSkipped: {testAssemblyFinished.TestsSkipped}");
+                    LogMessage($"TestAssemblyFinished: ExecutionTime: {testAssemblyFinished.ExecutionTime}");
                     break;
 
                 default:
