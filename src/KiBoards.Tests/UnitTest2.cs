@@ -13,8 +13,8 @@ namespace KiBoards.Tests
         public UnitTest2(TestContextFixture testContextFixture, ITestOutputHelper outputHelper)
         {
             // This is how to get messageBus
-            
-            outputHelper.SetContext(new { Version = "1234" });
+
+            testContextFixture.SetContext(new { Version = "1234" });
 
             outputHelper.WriteLine("HELLO WORLD MESSAGE BUS");
         }

@@ -23,12 +23,6 @@ namespace KiBoards.Framework
             return await collectionRunner.RunAsync();
         }
 
-        protected override IMessageBus CreateMessageBus()
-        {
-            _messageSink.OnMessage(new DiagnosticMessage("Creating MessageBus"));
-            return new TestMessageBus(base.CreateMessageBus(), _messageSink);
-        }
-
         protected override string GetTestFrameworkDisplayName()
         {
             var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
