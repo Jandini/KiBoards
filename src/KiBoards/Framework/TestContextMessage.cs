@@ -2,11 +2,9 @@
 
 namespace KiBoards.Framework
 {
-    internal class TestContextMessage : IMessageSinkMessage, IExecutionMessage
+    internal class TestContextMessage : ITestContextMessage
     {
         public object Context { get; set; }
-
-        public IEnumerable<ITestCase> TestCases => throw new NotImplementedException();
 
         public TestContextMessage(object context)
         {

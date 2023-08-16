@@ -1,4 +1,4 @@
-using Xunit;
+using Xunit.Abstractions;
 using Xunit.Sdk;
 
 [assembly: TestFramework("KiBoards.TestFramework", "KiBoards")]
@@ -8,20 +8,24 @@ namespace KiBoards.Tests
 
     public class UnitTest1 : IClassFixture<TestContextFixture>
     {
-        TestContextFixture _kiboards;
+        readonly TestContextFixture _testContextFixture;
+        readonly ITestOutputHelper _testOutputHelper;
 
-        public UnitTest1(TestContextFixture testContextFixture) 
+        public UnitTest1(TestContextFixture testContextFixture, ITestOutputHelper testOutputHelper) 
         {
-            _kiboards = testContextFixture;
+            _testContextFixture = testContextFixture;
+            _testOutputHelper = testOutputHelper;
 
-            _kiboards.SetContext(new { Version = "12345" });
+            _testContextFixture.SetContext(new { Version = "Context via Fixture" });
         }
 
         [Fact]
         public void Test1()
         {
-            _kiboards.SetContext(new { Version = "12345" });
 
+            var testCase = _testOutputHelper.GetTestCase();
+
+            _testContextFixture.SetContext(new { Version = "12345", TestCase = testCase }) ;
             Thread.Sleep(1000);
         }
 

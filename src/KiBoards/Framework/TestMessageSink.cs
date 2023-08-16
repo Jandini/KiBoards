@@ -29,7 +29,7 @@ namespace KiBoards.Framework
             switch (message)
             {
 
-                case TestContextMessage testContext:
+                case ITestContextMessage testContext:
                     break;
 
                 case ITestAssemblyStarting testAssemblyStarting:
