@@ -19,8 +19,8 @@ namespace KiBoards.Framework
         {
             try
             {
-                await _testRunner.BeginTestCasesRunAsync(testCases);
-                using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, new TestMessageSink(DiagnosticMessageSink), executionMessageSink, executionOptions, _testRunner);
+                await _testRunner.BeginTestCasesRunAsync(testCases);                
+                using var assemblyRunner = new XunitTestAssemblyRunner(TestAssembly, testCases, new TestMessageSink(DiagnosticMessageSink), executionMessageSink, executionOptions);
                 var results = await assemblyRunner.RunAsync();
                 await _testRunner.EndTestCasesRunAsync(results);
             }
@@ -29,5 +29,6 @@ namespace KiBoards.Framework
                 await _testRunner.ErrorTestCasesRunAsync(testCases, ex);
             }
         }
+        
     }
 }
