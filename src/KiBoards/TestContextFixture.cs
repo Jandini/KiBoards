@@ -1,5 +1,4 @@
-﻿using KiBoards.Framework;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 
 namespace KiBoards
 {
