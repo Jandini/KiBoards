@@ -1,4 +1,5 @@
-﻿using Xunit.Abstractions;
+﻿using Nest;
+using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace KiBoards.Models
@@ -6,7 +7,7 @@ namespace KiBoards.Models
     internal static class KiBoardsModelsExtensions
     {
 
-        internal static KiBoardsTestCaseStatusDto ToKiBoardsTestCase(this IXunitTestCase testCase, ITestMethod testMethod, KiBoardsTestCaseStatus status, KiBoardsTestCaseState state) => new KiBoardsTestCaseStatusDto()
+        internal static KiBoardsTestCaseStatusDto ToKiBoardsTestCase(this IXunitTestCase testCase, ITestMethod testMethod, KiBoardsTestCaseStatus status, KiBoardsTestCaseState state, object context = null) => new KiBoardsTestCaseStatusDto()
         {
             UniqueId = testCase.UniqueID,
             DisplayName = testCase.DisplayName,
@@ -24,12 +25,13 @@ namespace KiBoards.Models
                 {
                     Name = testMethod?.Method.Name
                 }
-            }            
+            },
+            Context = context
         };
 
     
-        internal static IEnumerable<KiBoardsTestCaseStatusDto> ToKiBoardsTestCases(this IEnumerable<IXunitTestCase> testCases, KiBoardsTestCaseStatus status, KiBoardsTestCaseState state) =>
-            testCases.Select(x => x.ToKiBoardsTestCase(null, status, state));
+        internal static IEnumerable<KiBoardsTestCaseStatusDto> ToKiBoardsTestCases(this IEnumerable<IXunitTestCase> testCases, KiBoardsTestCaseStatus status, KiBoardsTestCaseState state, object context = null) =>
+            testCases.Select(x => x.ToKiBoardsTestCase(null, status, state, context));
 
         internal static KiBoardsTestCaseStatus ToKiBoardsTestCaseStatus(this RunSummary summary)
             => summary.Failed > 0 ? KiBoardsTestCaseStatus.Failure : summary.Skipped > 0 ? KiBoardsTestCaseStatus.Skipped : KiBoardsTestCaseStatus.Success;

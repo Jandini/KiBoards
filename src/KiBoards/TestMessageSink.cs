@@ -47,6 +47,8 @@ namespace KiBoards
 
                 case ITestContextMessage testContext:
                     LogMessage($"TestContext: {testContext}");
+                    _testRunner.SetContext(testContext);
+
                     break;
 
                 case ITestAssemblyStarting testAssemblyStarting:
@@ -148,7 +150,7 @@ namespace KiBoards
                     break;
 
                 default:
-                    LogMessage($"UNKNOWN: {message.GetType().Name}");
+                    LogMessage($"UNKNOWN: {message.GetType().Name}: {message}");
                     break;
             }
         }

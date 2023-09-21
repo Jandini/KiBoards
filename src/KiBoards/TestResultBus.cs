@@ -5,7 +5,7 @@ namespace KiBoards
 {
     internal class TestResultBus : IMessageBus
     {
-        private IMessageBus _messageBus;
+        private readonly IMessageBus _messageBus;
 
         public ITestResultMessage TestResult { get; private set; }
 

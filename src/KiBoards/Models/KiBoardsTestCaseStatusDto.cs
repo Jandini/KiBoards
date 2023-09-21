@@ -9,5 +9,6 @@
         public string State { get; set; }
         public string SkipReason { get; set; }
         public KiBoardsTestMethodDto TestMethod { get; set; }
+        public object Context { get; set; }
     }
 }

@@ -16,7 +16,7 @@ namespace KiBoards.Tests
             _testContextFixture = testContextFixture;
             _testOutputHelper = testOutputHelper;
 
-            _testContextFixture.SetContext(new { Version = "Context via Fixture" });
+            _testContextFixture.SetContext(new { Version = "Context via Fixture", Hello = "World", Input = 1 });
         }
 
         [Fact]

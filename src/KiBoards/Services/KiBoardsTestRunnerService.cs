@@ -1,10 +1,5 @@
 ﻿using KiBoards.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
-using System.Threading.Tasks;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -16,6 +11,8 @@ namespace KiBoards.Services
         private readonly IKiBoardsElasticService _elasticService;
 
         public Guid RunId { get; private set; } = Guid.NewGuid();
+
+        public object Context { get; private set; }
 
         public KiBoardsTestRunnerService(IMessageSink messageSink, IKiBoardsElasticService elasticService)
         {
@@ -38,7 +35,7 @@ namespace KiBoards.Services
             //foreach (var testCase in testCases)
             //    _messageSink.OnMessage(new DiagnosticMessage($"Discovered: {testCase.UniqueID} {testCase.DisplayName}"));
 
-            await _elasticService.IndexTestCasesAsync(testCases.ToKiBoardsTestCases(KiBoardsTestCaseStatus.Discovered, KiBoardsTestCaseState.Active));            
+            await _elasticService.IndexTestCasesAsync(testCases.ToKiBoardsTestCases(KiBoardsTestCaseStatus.Discovered, KiBoardsTestCaseState.Active, Context));            
         }
 
 
@@ -51,13 +48,13 @@ namespace KiBoards.Services
         public async Task FinishTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod, ExceptionAggregator exceptionAggregator, RunSummary summary)
         {                     
            //_messageSink.OnMessage(new DiagnosticMessage($"{(summary.Failed > 0 ? "Failure" : summary.Skipped > 0 ? "Skipped" : "Success")}: {testCase.UniqueID} {testCase.DisplayName} ({summary.Time}s)"));
-            await _elasticService.IndexTestCaseAsync(testCase.ToKiBoardsTestCase(testMethod, summary.ToKiBoardsTestCaseStatus(), KiBoardsTestCaseState.Inactive));            
+            await _elasticService.IndexTestCaseAsync(testCase.ToKiBoardsTestCase(testMethod, summary.ToKiBoardsTestCaseStatus(), KiBoardsTestCaseState.Inactive, Context));            
         }
 
         public async Task StartTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod)
         {            
             //_messageSink.OnMessage(new DiagnosticMessage($"Started: {testCase.UniqueID} {testCase.DisplayName}"));
-            await _elasticService.IndexTestCaseAsync(testCase.ToKiBoardsTestCase(testMethod, KiBoardsTestCaseStatus.Running, KiBoardsTestCaseState.Active));
+            await _elasticService.IndexTestCaseAsync(testCase.ToKiBoardsTestCase(testMethod, KiBoardsTestCaseStatus.Running, KiBoardsTestCaseState.Active, Context));
         }
 
 
@@ -72,6 +69,11 @@ namespace KiBoards.Services
         {
             //_messageSink.OnMessage(new DiagnosticMessage($"Fatal: Run {RunId} failed. ({ex.Message})"));
             await Task.CompletedTask;
+        }
+
+        public void SetContext(ITestContextMessage testContext)
+        {
+            Context = testContext.Context;
         }
     }
 }

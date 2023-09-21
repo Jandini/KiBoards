@@ -17,7 +17,7 @@ namespace KiBoards
 
             serviceCollection
                 .AddSingleton(messageSink)
-                .AddElasticServices()                
+                .AddElasticServices()
                 .AddSingleton<IKiBoardsTestRunnerService, KiBoardsTestRunnerService>();
 
             _serviceProvider = serviceCollection.BuildServiceProvider();
@@ -27,6 +27,7 @@ namespace KiBoards
         {
             return new TestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink, _serviceProvider.GetRequiredService<IKiBoardsTestRunnerService>());
         }
+
         public new async void Dispose()
         {
             await Task.Delay(1);
@@ -51,6 +52,7 @@ namespace KiBoards
                 {
                     await _testRunner.BeginTestCasesRunAsync(testCases);
                     using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, new TestMessageSink(DiagnosticMessageSink, _testRunner), executionMessageSink, executionOptions, _testRunner);
+
                     var results = await assemblyRunner.RunAsync();
                     await _testRunner.EndTestCasesRunAsync(results);
                 }
@@ -74,6 +76,9 @@ namespace KiBoards
                 _testRunner = testRunner;
                 _messageSink = diagnosticMessageSink;
             }
+
+
+
 
             protected override async Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus, ITestCollection testCollection, IEnumerable<IXunitTestCase> testCases, CancellationTokenSource cancellationTokenSource)
             {
