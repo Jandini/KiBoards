@@ -5,6 +5,7 @@
 		<BaseOutputPath>..\..\bin</BaseOutputPath>
 		<ImplicitUsings>enable</ImplicitUsings>
 		<LangVersion>10</LangVersion>
+		<IsPackable>true</IsPackable>
 	</PropertyGroup>
 
 	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
@@ -16,7 +17,7 @@
 		<Authors>Matt Janda</Authors>
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
-		<PackageReadmeFile>README.md</PackageReadmeFile>		
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<PackageId>KiBoards</PackageId>
 		<AssemblyName>KiBoards</AssemblyName>
 		<RootNamespace>KiBoards</RootNamespace>
@@ -34,9 +35,9 @@
 
 	<ItemGroup>
 
-    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
-    <PackageReference Include="NEST" Version="7.17.5" />
-    <PackageReference Include="xunit" Version="2.5.1" />
+		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+		<PackageReference Include="NEST" Version="7.17.5" />
+		<PackageReference Include="xunit" Version="2.5.1" />
 
 	</ItemGroup>
 </Project>
