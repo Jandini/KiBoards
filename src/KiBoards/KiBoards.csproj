@@ -35,6 +35,11 @@
 
 	<ItemGroup>
 
+		<PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+
 		<PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
 		<PackageReference Include="NEST" Version="7.17.5" />
 		<PackageReference Include="xunit" Version="2.5.1" />
