@@ -1,7 +1,6 @@
 ﻿using KiBoards.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Nest;
-using System;
 
 namespace KiBoards.Services
 {
@@ -12,6 +11,8 @@ namespace KiBoards.Services
             return services
                 .AddSingleton<IElasticClient>(new ElasticClient(ConfigureIndexes(new ConnectionSettings(new Uri($"http://localhost:9200"))
                     .MaxRetryTimeout(TimeSpan.FromMinutes(5))
+                    // This resolves internal errors with bulk index Invalid NEST response built from a successful (200) low level call on POST: /_bulk
+                    .EnableApiVersioningHeader()
                     .MaximumRetries(3))))
                 .AddTransient<IKiBoardsElasticService, KiBoardsElasticService>();
         }
