@@ -1,0 +1,66 @@
+[xUnit.net 00:00:02.64] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodStarting
+
+[xUnit.net 00:00:02.67] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseStarting
+[xUnit.net 00:00:02.67] KiBoards.Tests: MessageBus: Xunit.Sdk.TestStarting
+[xUnit.net 00:00:02.67] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionStarting
+[xUnit.net 00:00:02.67] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionFinished
+[xUnit.net 00:00:02.68] KiBoards.Tests: MessageBus: Xunit.Sdk.TestPassed
+[xUnit.net 00:00:02.68] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFinished
+[xUnit.net 00:00:02.68] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseFinished
+
+[xUnit.net 00:00:02.71] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseStarting
+[xUnit.net 00:00:02.71] KiBoards.Tests: MessageBus: Xunit.Sdk.TestStarting
+[xUnit.net 00:00:02.71] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionStarting
+[xUnit.net 00:00:02.71] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionFinished
+[xUnit.net 00:00:02.72] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFailed
+[xUnit.net 00:00:02.72] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFinished
+[xUnit.net 00:00:02.72] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseFinished
+
+[xUnit.net 00:00:02.73] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseStarting
+[xUnit.net 00:00:02.73] KiBoards.Tests: MessageBus: Xunit.Sdk.TestStarting
+[xUnit.net 00:00:02.73] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionStarting
+[xUnit.net 00:00:02.73] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionFinished
+
+[xUnit.net 00:00:02.73] KiBoards.Tests: MessageBus: Xunit.Sdk.TestPassed
+[xUnit.net 00:00:02.73] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFinished
+
+[xUnit.net 00:00:02.73] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseFinished
+
+[xUnit.net 00:00:02.74] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodFinished
+
+
+[xUnit.net 00:00:02.74] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodStarting
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseStarting
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestStarting
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionStarting
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionFinished
+
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestPassed
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFinished
+
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseFinished
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodFinished
+
+[xUnit.net 00:00:02.75] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodStarting
+[xUnit.net 00:00:02.76] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseStarting
+[xUnit.net 00:00:02.76] KiBoards.Tests: MessageBus: Xunit.Sdk.TestStarting
+[xUnit.net 00:00:02.76] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionStarting
+[xUnit.net 00:00:02.76] KiBoards.Tests: MessageBus: Xunit.Sdk.TestClassConstructionFinished
+
+[xUnit.net 00:00:02.76] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFailed
+[xUnit.net 00:00:02.76] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFinished
+
+[xUnit.net 00:00:02.76] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseFinished
+[xUnit.net 00:00:02.77] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodFinished
+
+[xUnit.net 00:00:02.77] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodStarting
+[xUnit.net 00:00:02.77] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseStarting
+[xUnit.net 00:00:02.77] KiBoards.Tests: MessageBus: Xunit.Sdk.TestStarting
+
+[xUnit.net 00:00:02.77] KiBoards.Tests: MessageBus: Xunit.Sdk.TestSkipped
+[xUnit.net 00:00:02.77] KiBoards.Tests: MessageBus: Xunit.Sdk.TestFinished
+
+[xUnit.net 00:00:02.77] KiBoards.Tests: MessageBus: Xunit.Sdk.TestCaseFinished
+[xUnit.net 00:00:02.78] KiBoards.Tests: MessageBus: Xunit.Sdk.TestMethodFinished
+
+Failed!  - Failed:     2, Passed:     3, Skipped:     1, Total:     6, Duration: 85 ms - KiBoards.Tests.dll (net7.0)

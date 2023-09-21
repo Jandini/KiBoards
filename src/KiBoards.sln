@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FDCEF06B-A89A-43CC-B505-4608DF29BBF7}") = "KiBoards", "KiBoards\KiBoards.csproj", "{5DC70E65-1093-4D72-9129-F0FFE3AF5151}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards", "KiBoards\KiBoards.csproj", "{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiBoards.Tests", "KiBoards.Tests\KiBoards.Tests.csproj", "{BD23E63C-CC78-4714-A319-E492CC90178A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -11,15 +13,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{5DC70E65-1093-4D72-9129-F0FFE3AF5151}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5DC70E65-1093-4D72-9129-F0FFE3AF5151}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5DC70E65-1093-4D72-9129-F0FFE3AF5151}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5DC70E65-1093-4D72-9129-F0FFE3AF5151}.Release|Any CPU.Build.0 = Release|Any CPU
+		{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BD23E63C-CC78-4714-A319-E492CC90178A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BD23E63C-CC78-4714-A319-E492CC90178A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BD23E63C-CC78-4714-A319-E492CC90178A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BD23E63C-CC78-4714-A319-E492CC90178A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
-		SolutionGuid = {58F0F7CE-57BF-43A9-8390-A15E0C1A9A66}
+		SolutionGuid = {F7A87B3B-2908-4E34-AC90-13E68B977B90}
 	EndGlobalSection
 EndGlobal
