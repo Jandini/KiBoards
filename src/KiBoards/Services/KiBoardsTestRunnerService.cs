@@ -34,7 +34,7 @@ namespace KiBoards.Services
             //foreach (var testCase in testCases)
             //    _messageSink.OnMessage(new DiagnosticMessage($"Discovered: {testCase.UniqueID} {testCase.DisplayName}"));
 
-            await _elasticService.IndexTestCasesStatusAsync(testCases.ToKiBoardsTestCases(KiBoardsTestCaseStatus.Discovered, KiBoardsTestCaseState.Active, Context));            
+            await _elasticService.IndexTestCasesStatusAsync(testCases.ToKiBoardsTestCases(KiBoardsTestCaseStatusName.Discovered, KiBoardsTestCaseState.Active, Context));            
         }
 
 
@@ -53,7 +53,7 @@ namespace KiBoards.Services
         public async Task StartTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod)
         {            
             //_messageSink.OnMessage(new DiagnosticMessage($"Started: {testCase.UniqueID} {testCase.DisplayName}"));
-            await _elasticService.IndexTestCaseStatusAsync(testCase.ToKiBoardsTestCase(testMethod, KiBoardsTestCaseStatus.Running, KiBoardsTestCaseState.Active, Context));
+            await _elasticService.IndexTestCaseStatusAsync(testCase.ToKiBoardsTestCase(testMethod, KiBoardsTestCaseStatusName.Running, KiBoardsTestCaseState.Active, Context));
         }
 
 

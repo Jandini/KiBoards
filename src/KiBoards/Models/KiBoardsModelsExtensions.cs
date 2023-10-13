@@ -1,5 +1,4 @@
-﻿using Nest;
-using Xunit.Abstractions;
+﻿using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace KiBoards.Models
@@ -7,7 +6,7 @@ namespace KiBoards.Models
     internal static class KiBoardsModelsExtensions
     {
 
-        internal static KiBoardsTestCaseStatusDto ToKiBoardsTestCase(this IXunitTestCase testCase, ITestMethod testMethod, KiBoardsTestCaseStatus status, KiBoardsTestCaseState state, object context = null) => new KiBoardsTestCaseStatusDto()
+        internal static KiBoardsTestCaseStatus ToKiBoardsTestCase(this IXunitTestCase testCase, ITestMethod testMethod, KiBoardsTestCaseStatusName status, KiBoardsTestCaseState state, object context = null) => new KiBoardsTestCaseStatus()
         {
             UniqueId = testCase.UniqueID,
             DisplayName = testCase.DisplayName,
@@ -15,25 +14,27 @@ namespace KiBoards.Models
             UpdatedOn = DateTime.Now.ToUniversalTime(),
             Status = status.ToString(),
             State = state.ToString(),
-            TestMethod = new KiBoardsTestMethodDto()
+            Method = new KiBoardsTestCaseMethod()
             {
-                TestClass = new KiBoardsTestClassDto()
+                Name = testMethod?.TestClass.Class.Name
+            },
+            Class = new KiBoardsTestCaseClass()
+            {
+                Assembly = new KiBoardsTestCaseAssembly()
                 {
-                    Name = testMethod?.TestClass.Class.Name
-                },                
-                Method = new KiBoardsTestMethodInfoDto()
-                {
-                    Name = testMethod?.Method.Name
-                }
+                    Name = testMethod.TestClass.Class.Assembly.Name,
+                    AssemblyPath = testMethod.TestClass.Class.Assembly.AssemblyPath,
+                },
+                Name = testMethod?.TestClass.Class.Name,                
             },
             Context = context
         };
 
     
-        internal static IEnumerable<KiBoardsTestCaseStatusDto> ToKiBoardsTestCases(this IEnumerable<IXunitTestCase> testCases, KiBoardsTestCaseStatus status, KiBoardsTestCaseState state, object context = null) =>
+        internal static IEnumerable<KiBoardsTestCaseStatus> ToKiBoardsTestCases(this IEnumerable<IXunitTestCase> testCases, KiBoardsTestCaseStatusName status, KiBoardsTestCaseState state, object context = null) =>
             testCases.Select(x => x.ToKiBoardsTestCase(null, status, state, context));
 
-        internal static KiBoardsTestCaseStatus ToKiBoardsTestCaseStatus(this RunSummary summary)
-            => summary.Failed > 0 ? KiBoardsTestCaseStatus.Failure : summary.Skipped > 0 ? KiBoardsTestCaseStatus.Skipped : KiBoardsTestCaseStatus.Success;
+        internal static KiBoardsTestCaseStatusName ToKiBoardsTestCaseStatus(this RunSummary summary)
+            => summary.Failed > 0 ? KiBoardsTestCaseStatusName.Failure : summary.Skipped > 0 ? KiBoardsTestCaseStatusName.Skipped : KiBoardsTestCaseStatusName.Success;
     }
 }

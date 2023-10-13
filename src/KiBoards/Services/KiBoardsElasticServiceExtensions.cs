@@ -18,7 +18,7 @@ namespace KiBoards.Services
 
         internal static ConnectionSettings ConfigureIndexes(ConnectionSettings connectionSettings)
         {
-            connectionSettings.DefaultMappingFor<KiBoardsTestCaseStatusDto>(m => m
+            connectionSettings.DefaultMappingFor<KiBoardsTestCaseStatus>(m => m
                 .IndexName($"kiboards-testcase-status-{DateTime.UtcNow:yyyy-MM}")
                 .IdProperty(p => p.UniqueId));
 

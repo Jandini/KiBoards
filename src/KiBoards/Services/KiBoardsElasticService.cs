@@ -17,7 +17,7 @@ namespace KiBoards.Services
         }
 
 
-        public async Task IndexTestCasesStatusAsync(IEnumerable<KiBoardsTestCaseStatusDto> testCases)
+        public async Task IndexTestCasesStatusAsync(IEnumerable<KiBoardsTestCaseStatus> testCases)
         {
             try
             {
@@ -52,7 +52,7 @@ namespace KiBoards.Services
             }
         }
 
-        public async Task IndexTestCaseStatusAsync(KiBoardsTestCaseStatusDto testCase)
+        public async Task IndexTestCaseStatusAsync(KiBoardsTestCaseStatus testCase)
         {
             try
             {
