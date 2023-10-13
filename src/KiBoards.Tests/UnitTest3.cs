@@ -3,14 +3,13 @@ using Xunit.Abstractions;
 namespace KiBoards.Tests
 {
 
-    public class UnitTest3 : IClassFixture<TestStartupFixture>
+    public class UnitTest3 : IClassFixture<TestContextFixture>
     {
 
-        public UnitTest3(TestStartupFixture testContextFixture, ITestOutputHelper outputHelper)
+        public UnitTest3(ITestOutputHelper outputHelper)
         {
             // This is how to get messageBus
 
-            testContextFixture.SetContext(new { Version = "1234" });
 
             outputHelper.WriteLine("HELLO WORLD MESSAGE BUS");
         }
@@ -20,7 +19,7 @@ namespace KiBoards.Tests
         {
             Thread.Sleep(5000);
 
-           
+
         }
 
         [Theory]

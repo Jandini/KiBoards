@@ -1,12 +1,8 @@
-﻿using KiBoards.Models;
-
-namespace KiBoards.Services
+﻿namespace KiBoards.Services
 {
     internal interface IKiBoardsElasticService
     {
-        Task IndexTestCasesStatusAsync(IEnumerable<KiBoardsTestCaseStatus> testCases);
-        Task IndexTestCaseStatusAsync(KiBoardsTestCaseStatus testCase);
-        Task IndexTestCaseRunAsync(KiBoardsTestCaseRun testCase);
+        Task IndexDocumentAsync<T>(T document) where T : class;
 
     }
 }

@@ -1,76 +1,30 @@
 ﻿using KiBoards.Models;
 using System.Reflection;
-using System.Xml;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace KiBoards.Services
 {
-    internal class KiBoardsTestRunnerService : IKiBoardsTestRunnerService, IDisposable
+    internal class KiBoardsTestRunnerService : IKiBoardsTestRunnerService
     {
-        private readonly IMessageSink _messageSink;
         private readonly IKiBoardsElasticService _elasticService;
 
         public KiBoardsTestRunnerService(IMessageSink messageSink, IKiBoardsElasticService elasticService)
-        {
-            _messageSink = messageSink;
+        {            
             _elasticService = elasticService;
 
             var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-            messageSink.OnMessage(new DiagnosticMessage($"KiBoards: {version}"));
-            messageSink.OnMessage(new DiagnosticMessage($"RunId: {TestFramework.TestRun}"));
+            messageSink.OnMessage(new DiagnosticMessage($"Running KiBoards.xUnit: {version}"));
         }
 
-
-        public void Dispose()
+        public async Task IndexTestRunAsync(TestRun testRun)
         {
-            _messageSink.OnMessage(new DiagnosticMessage("KiBoards run finished."));
+            await _elasticService.IndexDocumentAsync(testRun);
         }
 
-        public async Task BeginTestCasesRunAsync(IEnumerable<IXunitTestCase> testCases)
-        {            
-            //foreach (var testCase in testCases)
-            //    _messageSink.OnMessage(new DiagnosticMessage($"Discovered: {testCase.UniqueID} {testCase.DisplayName}"));
-
-            await _elasticService.IndexTestCasesStatusAsync(testCases.ToKiBoardsTestCases(KiBoardsTestCaseStatusName.Discovered, KiBoardsTestCaseState.Active, TestFramework.TestRun.Context));            
-        }
-
-
-        public async Task ErrorTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod, Exception ex)
-        {
-            //_messageSink.OnMessage(new DiagnosticMessage($"Fatal: {testCase.UniqueID} ({ex.Message})"));
-            await Task.CompletedTask;
-        }
-
-        public async Task FinishTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod, ExceptionAggregator exceptionAggregator, RunSummary summary)
-        {                     
-           //_messageSink.OnMessage(new DiagnosticMessage($"{(summary.Failed > 0 ? "Failure" : summary.Skipped > 0 ? "Skipped" : "Success")}: {testCase.UniqueID} {testCase.DisplayName} ({summary.Time}s)"));
-            await _elasticService.IndexTestCaseStatusAsync(testCase.ToKiBoardsTestCase(testMethod, summary.ToKiBoardsTestCaseStatus(), KiBoardsTestCaseState.Inactive, TestFramework.TestRun.Context));
-        }
-
-        public async Task StartTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod)
-        {            
-            //_messageSink.OnMessage(new DiagnosticMessage($"Started: {testCase.UniqueID} {testCase.DisplayName}"));
-            await _elasticService.IndexTestCaseStatusAsync(testCase.ToKiBoardsTestCase(testMethod, KiBoardsTestCaseStatusName.Running, KiBoardsTestCaseState.Active, TestFramework.TestRun.Context));
-        }
-
-
-        public async Task EndTestCasesRunAsync(RunSummary results)
-        {
-            //_messageSink.OnMessage(new DiagnosticMessage("KiBoards run complete."));
-            await Task.CompletedTask;
-
-        }
-
-        public async Task ErrorTestCasesRunAsync(IEnumerable<IXunitTestCase> testCases, Exception ex)
-        {
-            //_messageSink.OnMessage(new DiagnosticMessage($"Fatal: Run {RunId} failed. ({ex.Message})"));
-            await Task.CompletedTask;
-        }
-      
         public async Task IndexTestCaseRunAsync(ITestResultMessage testResult)
         {
-            await _elasticService.IndexTestCaseRunAsync(new KiBoardsTestCaseRun()
+            await _elasticService.IndexDocumentAsync(new KiBoardsTestCaseRun()
             {
                 TestRun = TestFramework.TestRun,
                 ExecutionTime = testResult.ExecutionTime,
@@ -108,6 +62,6 @@ namespace KiBoards.Services
                 Skipped = testResult is ITestSkipped skipped ? new KiBoardsTestCaseRunSkipped() { Reason = skipped.Reason } : null,
                 Status = testResult is ITestPassed ? "Passed" : testResult is ITestFailed ? "Failed" : testResult is ITestSkipped ? "Skipped" : "Other"
             }); 
-        }
+        }      
     }
 }
