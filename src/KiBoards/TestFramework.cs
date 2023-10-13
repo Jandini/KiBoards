@@ -8,7 +8,7 @@ namespace KiBoards
 {
     public class TestFramework : XunitTestFramework, IDisposable
     {
-        public static readonly Guid RunIdentifier = Guid.NewGuid();
+        public static readonly TestRunIdentifier RunIdentifier = new();
 
         private readonly ServiceProvider _serviceProvider;
 
