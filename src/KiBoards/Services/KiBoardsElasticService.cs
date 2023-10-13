@@ -16,7 +16,8 @@ namespace KiBoards.Services
             _messageSink = messageSink;
         }
 
-        public async Task IndexTestCasesAsync(IEnumerable<KiBoardsTestCaseStatusDto> testCases)
+
+        public async Task IndexTestCasesStatusAsync(IEnumerable<KiBoardsTestCaseStatusDto> testCases)
         {
             try
             {
@@ -34,7 +35,24 @@ namespace KiBoards.Services
             }
         }
 
-        public async Task IndexTestCaseAsync(KiBoardsTestCaseStatusDto testCase)
+        public async Task IndexTestCaseRunAsync(KiBoardsTestCaseRunDto testCase)
+        {
+            try
+            {
+                var result = await _elasticClient.IndexDocumentAsync(testCase);
+
+                if (!result.IsValid)
+                {
+                    _messageSink.OnMessage(new DiagnosticMessage(result.DebugInformation));
+                }
+            }
+            catch (Exception ex)
+            {
+                _messageSink.OnMessage(new DiagnosticMessage(ex.Message));
+            }
+        }
+
+        public async Task IndexTestCaseStatusAsync(KiBoardsTestCaseStatusDto testCase)
         {
             try
             {

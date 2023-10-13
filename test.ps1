@@ -1,0 +1,1 @@
+dotnet test -c:Release src\KiBoards.Tests

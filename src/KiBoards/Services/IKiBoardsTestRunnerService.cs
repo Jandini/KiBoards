@@ -4,9 +4,7 @@ using Xunit.Sdk;
 namespace KiBoards.Services
 {
     internal interface IKiBoardsTestRunnerService 
-    {
-        Guid RunId { get; }
-        
+    {        
         Task BeginTestCasesRunAsync(IEnumerable<IXunitTestCase> testCases);
         Task StartTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod);
         Task FinishTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod, ExceptionAggregator exceptionAggregator, RunSummary result);
@@ -14,5 +12,6 @@ namespace KiBoards.Services
         Task EndTestCasesRunAsync(RunSummary results);
         Task ErrorTestCasesRunAsync(IEnumerable<IXunitTestCase> testCases, Exception ex);
         void SetContext(ITestContextMessage testContext);
+        Task IndexTestCaseRunAsync(ITestResultMessage testResult);
     }
 }

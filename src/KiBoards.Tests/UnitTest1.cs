@@ -21,11 +21,10 @@ namespace KiBoards.Tests
 
         [Fact]
         public void Test1()
-        {
-
+        {           
             var testCase = _testOutputHelper.GetTestCase();
 
-            _testContextFixture.SetContext(new { Version = "12345", TestCase = testCase }) ;
+            _testContextFixture.SetContext(new { Version = "12345", TestCase = testCase, TestFramework.RunIdentifier }) ;
             Thread.Sleep(1000);
         }
 

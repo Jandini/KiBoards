@@ -8,6 +8,8 @@ namespace KiBoards
 {
     public class TestFramework : XunitTestFramework, IDisposable
     {
+        public static readonly Guid RunIdentifier = Guid.NewGuid();
+
         private readonly ServiceProvider _serviceProvider;
 
         public TestFramework(IMessageSink messageSink)
@@ -148,7 +150,6 @@ namespace KiBoards
         private class TestMethodRunner : XunitTestMethodRunner
         {
             private readonly IKiBoardsTestRunnerService _testRunner;
-            private readonly TestResultSink _resultSink;
             private readonly TestResultBus _resultBus;
 
             public TestMethodRunner(ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, TestResultBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments, IKiBoardsTestRunnerService testRunner)
@@ -165,10 +166,10 @@ namespace KiBoards
                 {
                     await _testRunner.StartTestCaseAsync(testCase, TestMethod);
                     var result = await base.RunTestCaseAsync(testCase);
-
                     var testResult = _resultBus.TestResult;
-
                     await _testRunner.FinishTestCaseAsync(testCase, TestMethod, Aggregator, result);
+
+                    await _testRunner.IndexTestCaseRunAsync(testResult);
 
                     return result;
                 }

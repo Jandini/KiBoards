@@ -4,8 +4,9 @@ namespace KiBoards.Services
 {
     internal interface IKiBoardsElasticService
     {
-        Task IndexTestCasesAsync(IEnumerable<KiBoardsTestCaseStatusDto> testCases);
-        Task IndexTestCaseAsync(KiBoardsTestCaseStatusDto testCase);
+        Task IndexTestCasesStatusAsync(IEnumerable<KiBoardsTestCaseStatusDto> testCases);
+        Task IndexTestCaseStatusAsync(KiBoardsTestCaseStatusDto testCase);
+        Task IndexTestCaseRunAsync(KiBoardsTestCaseRunDto testCase);
 
     }
 }
