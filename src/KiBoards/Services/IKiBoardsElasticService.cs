@@ -6,7 +6,7 @@ namespace KiBoards.Services
     {
         Task IndexTestCasesStatusAsync(IEnumerable<KiBoardsTestCaseStatusDto> testCases);
         Task IndexTestCaseStatusAsync(KiBoardsTestCaseStatusDto testCase);
-        Task IndexTestCaseRunAsync(KiBoardsTestCaseRunDto testCase);
+        Task IndexTestCaseRunAsync(KiBoardsTestCaseRun testCase);
 
     }
 }

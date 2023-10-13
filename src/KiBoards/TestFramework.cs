@@ -48,6 +48,8 @@ namespace KiBoards
                 _testRunner = testRunner;
             }
 
+            
+
             protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
             {
                 try

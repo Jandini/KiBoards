@@ -35,7 +35,7 @@ namespace KiBoards.Services
             }
         }
 
-        public async Task IndexTestCaseRunAsync(KiBoardsTestCaseRunDto testCase)
+        public async Task IndexTestCaseRunAsync(KiBoardsTestCaseRun testCase)
         {
             try
             {

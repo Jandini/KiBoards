@@ -1,10 +1,7 @@
-﻿using System;
-
-namespace KiBoards.Models
+﻿namespace KiBoards.Models
 {
     class KiBoardsTestClassDto
     {
-        public string Name { get; set; }
-        
+        public string Name { get; set; }        
     }
 }

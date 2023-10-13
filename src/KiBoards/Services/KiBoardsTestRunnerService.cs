@@ -1,5 +1,6 @@
 ﻿using KiBoards.Models;
 using System.Reflection;
+using System.Xml;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -25,7 +26,7 @@ namespace KiBoards.Services
 
         public void Dispose()
         {
-            //_messageSink.OnMessage(new DiagnosticMessage("KiBoards run finished."));
+            _messageSink.OnMessage(new DiagnosticMessage("KiBoards run finished."));
         }
 
         public async Task BeginTestCasesRunAsync(IEnumerable<IXunitTestCase> testCases)
@@ -76,13 +77,42 @@ namespace KiBoards.Services
 
         public async Task IndexTestCaseRunAsync(ITestResultMessage testResult)
         {
-            await _elasticService.IndexTestCaseRunAsync(new KiBoardsTestCaseRunDto()
+            await _elasticService.IndexTestCaseRunAsync(new KiBoardsTestCaseRun()
             {
                 RunIdentifier = TestFramework.RunIdentifier,
-                DisplayName = testResult.TestCase.DisplayName,
-                UniqueId = testResult.TestCase.UniqueID,
                 ExecutionTime = testResult.ExecutionTime,
                 Output = testResult.Output,
+                Failed = testResult is ITestFailed failed ? new KiBoardsTestCaseRunFailed()
+                {
+                    StackTraces = failed.StackTraces,
+                    ExceptionTypes = failed.ExceptionTypes,
+                    Messages = failed.Messages,
+                } : null,                   
+                TestCase = new KiBoardsTestCase()
+                {
+                    DisplayName = testResult.TestCase.DisplayName,
+                    UniqueId = testResult.TestCase.UniqueID,
+                    SourceInformation = testResult.TestCase.SourceInformation,
+                    Traits = testResult.TestCase.Traits,
+                    Method = new KiBoardsTestCaseMethod()
+                    {
+                        Name = testResult.TestMethod.Method.Name,
+                    },
+                    Class = new KiBoardsTestCaseClass()
+                    {
+                        Name = testResult.TestClass.Class.Name,
+                        Assembly = new KiBoardsTestCaseAssembly() {
+                            Name = testResult.TestClass.Class.Assembly.Name,                            
+                            AssemblyPath = testResult.TestClass.Class.Assembly.AssemblyPath
+                        }
+                    },
+                    Collection = new KiBoardsTestCaseCollection()
+                    {
+                        DisplayName = testResult.TestClass.TestCollection.DisplayName,
+                        UniqueId = testResult.TestClass.TestCollection.UniqueID,
+                    }
+                    },
+                Skipped = testResult is ITestSkipped skipped ? new KiBoardsTestCaseRunSkipped() { Reason = skipped.Reason } : null,
                 Status = testResult is ITestPassed ? "Passed" : testResult is ITestFailed ? "Failed" : testResult is ITestSkipped ? "Skipped" : "Other"
             }); 
         }
