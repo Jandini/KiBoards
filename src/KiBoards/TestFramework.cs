@@ -8,7 +8,7 @@ namespace KiBoards
 {
     public class TestFramework : XunitTestFramework, IDisposable
     {
-        public static readonly TestRunIdentifier RunIdentifier = new();
+        public static readonly TestRun TestRun = new();
 
         private readonly ServiceProvider _serviceProvider;
 
@@ -55,9 +55,13 @@ namespace KiBoards
                 try
                 {
                     await _testRunner.BeginTestCasesRunAsync(testCases);
-                    using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, new TestMessageSink(DiagnosticMessageSink, _testRunner), executionMessageSink, executionOptions, _testRunner);
+                    using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _testRunner);
 
                     var results = await assemblyRunner.RunAsync();
+
+                    TestRun.RunSummary = results;
+                    // Index TestRun here...
+
                     await _testRunner.EndTestCasesRunAsync(results);
                 }
                 catch (Exception ex)

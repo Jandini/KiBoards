@@ -11,7 +11,6 @@ namespace KiBoards.Services
         Task ErrorTestCaseAsync(IXunitTestCase testCase, ITestMethod testMethod, Exception ex);
         Task EndTestCasesRunAsync(RunSummary results);
         Task ErrorTestCasesRunAsync(IEnumerable<IXunitTestCase> testCases, Exception ex);
-        void SetContext(ITestContextMessage testContext);
         Task IndexTestCaseRunAsync(ITestResultMessage testResult);
     }
 }

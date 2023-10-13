@@ -1,19 +1,15 @@
-﻿using Xunit.Abstractions;
-
-namespace KiBoards
+﻿namespace KiBoards.Tests
 {
-    public class TestContextFixture 
+    public class TestStartupFixture : IDisposable
     {
-        private readonly IMessageSink _messageSink;
-
-        public TestContextFixture(IMessageSink messageSink)
-        {
-            _messageSink = messageSink;
-        }
-
         public void SetContext(object context)
         {
-            _messageSink.OnMessage(new TestContextMessage(context));
+            TestFramework.TestRun.Context = context;
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }
