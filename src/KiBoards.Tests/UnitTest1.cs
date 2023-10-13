@@ -5,26 +5,23 @@ using Xunit.Sdk;
 
 namespace KiBoards.Tests
 {
-
+    
     public class UnitTest1 : IClassFixture<TestContextFixture>
     {
-        readonly TestContextFixture _testContextFixture;
         readonly ITestOutputHelper _testOutputHelper;
 
-        public UnitTest1(TestContextFixture testContextFixture, ITestOutputHelper testOutputHelper) 
+        public UnitTest1(ITestOutputHelper testOutputHelper) 
         {
-            _testContextFixture = testContextFixture;
             _testOutputHelper = testOutputHelper;
 
-            _testContextFixture.SetContext(new { Version = "Context via Fixture", Hello = "World", Input = 1 });
+            
         }
 
         [Fact]
         public void Test1()
         {           
             var testCase = _testOutputHelper.GetTestCase();
-
-            _testContextFixture.SetContext(new { Version = "12345", TestCase = testCase, TestFramework.RunIdentifier }) ;
+            
             Thread.Sleep(1000);
         }
 

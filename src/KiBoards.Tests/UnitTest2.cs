@@ -7,12 +7,8 @@ namespace KiBoards.Tests
     public class UnitTest2 : IClassFixture<TestContextFixture>
     {
 
-        public UnitTest2(TestContextFixture testContextFixture, ITestOutputHelper outputHelper)
-        {
-            // This is how to get messageBus
-
-            testContextFixture.SetContext(new { Version = "1234" });
-
+        public UnitTest2(ITestOutputHelper outputHelper)
+        {            
             outputHelper.WriteLine("HELLO WORLD MESSAGE BUS");
         }
 

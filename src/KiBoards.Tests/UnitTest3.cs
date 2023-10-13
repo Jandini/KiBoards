@@ -3,10 +3,10 @@ using Xunit.Abstractions;
 namespace KiBoards.Tests
 {
 
-    public class UnitTest3 : IClassFixture<TestContextFixture>
+    public class UnitTest3 : IClassFixture<TestStartupFixture>
     {
 
-        public UnitTest3(TestContextFixture testContextFixture, ITestOutputHelper outputHelper)
+        public UnitTest3(TestStartupFixture testContextFixture, ITestOutputHelper outputHelper)
         {
             // This is how to get messageBus
 

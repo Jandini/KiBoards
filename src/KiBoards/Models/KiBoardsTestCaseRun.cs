@@ -2,7 +2,7 @@
 {
     internal class KiBoardsTestCaseRun
     {
-        public TestRunIdentifier RunIdentifier { get; set; }
+        public TestRun TestRun { get; set; }
         public KiBoardsTestCase TestCase { get; set; }
         public KiBoardsTestCaseRunSkipped Skipped { get; set; }
         public KiBoardsTestCaseRunFailed Failed { get; set; }

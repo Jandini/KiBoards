@@ -22,8 +22,8 @@ namespace KiBoards.Models
             {
                 Assembly = new KiBoardsTestCaseAssembly()
                 {
-                    Name = testMethod.TestClass.Class.Assembly.Name,
-                    AssemblyPath = testMethod.TestClass.Class.Assembly.AssemblyPath,
+                    Name = testMethod?.TestClass.Class.Assembly.Name,
+                    AssemblyPath = testMethod?.TestClass.Class.Assembly.AssemblyPath,
                 },
                 Name = testMethod?.TestClass.Class.Name,                
             },
