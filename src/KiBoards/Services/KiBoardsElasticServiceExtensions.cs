@@ -23,8 +23,7 @@ namespace KiBoards.Services
                 .IdProperty(p => p.UniqueId));
 
             connectionSettings.DefaultMappingFor<KiBoardsTestCaseRunDto>(m => m
-                .IndexName($"kiboards-testcase-runs-{DateTime.UtcNow:yyyy-MM}")
-                .IdProperty(p => p.UniqueId));
+                .IndexName($"kiboards-testcase-runs-{DateTime.UtcNow:yyyy-MM}"));
             
             return connectionSettings;
         }

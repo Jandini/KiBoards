@@ -1,6 +1,4 @@
-﻿using Xunit.Sdk;
-
-namespace KiBoards.Models
+﻿namespace KiBoards.Models
 {
     internal class KiBoardsTestCaseRunDto
     {
@@ -12,7 +10,6 @@ namespace KiBoards.Models
         public string Status {  get; set; }
 
         //public TestPassed Passed { get; set;}
-
         //public TestSkipped Skipped { get; set; }
         //public TestFailed Failed { get; set; }
 
