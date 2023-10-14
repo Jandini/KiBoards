@@ -1,6 +1,6 @@
 ﻿namespace KiBoards.Models
 {
-    internal class KiBoardsTestCaseRun
+    class KiBoardsTestCaseRun
     {
         public TestRun TestRun { get; set; }
         public KiBoardsTestCase TestCase { get; set; }

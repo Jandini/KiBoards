@@ -1,6 +1,6 @@
 ﻿namespace KiBoards.Models
 {
-    public class KiBoardsTestCaseRunFailed 
+    class KiBoardsTestCaseRunFailed 
     {
         public string[] ExceptionTypes { get; set; }
         public string[] Messages { get; set; }
