@@ -13,7 +13,7 @@ namespace KiBoards
 
         public TestRun()
         {
-            Id = Environment.GetEnvironmentVariable("KIBOARDS_TEST_RUN_ID") ?? Guid.NewGuid().ToString();
+            Id = Environment.GetEnvironmentVariable("KIBS_TEST_RUN_ID") ?? Guid.NewGuid().ToString();
             StartTime = DateTime.UtcNow;
             MachineName = Environment.MachineName;
             UserName = Environment.UserName;

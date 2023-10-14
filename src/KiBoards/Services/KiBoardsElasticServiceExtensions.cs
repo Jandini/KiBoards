@@ -8,8 +8,10 @@ namespace KiBoards.Services
     {
         internal static IServiceCollection AddElasticServices(this IServiceCollection services)
         {
+            var connectionSettings = new ConnectionSettings(new Uri(Environment.GetEnvironmentVariable("KIBS_ELASTICSEARCH_HOST") ?? "http://localhost:9200"));
+
             return services
-                .AddSingleton<IElasticClient>(new ElasticClient(ConfigureIndexes(new ConnectionSettings(new Uri($"http://localhost:9200"))
+                .AddSingleton<IElasticClient>(new ElasticClient(ConfigureIndexes(connectionSettings
                     .MaxRetryTimeout(TimeSpan.FromMinutes(5))                    
                     .EnableApiVersioningHeader() // EnableApiVersioningHeader resolves internal errors with bulk index Invalid NEST response built from a successful (200) low level call on POST: /_bulk
                     .MaximumRetries(3))))
