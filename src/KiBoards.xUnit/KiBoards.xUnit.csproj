@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
 		<TargetFramework>netstandard2.1</TargetFramework>
@@ -18,11 +18,11 @@
 		<PackageIcon>icon.png</PackageIcon>
 		<PackageLicenseFile>LICENSE</PackageLicenseFile>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<PackageId>KiBoards</PackageId>
-		<AssemblyName>KiBoards</AssemblyName>
-		<RootNamespace>KiBoards</RootNamespace>
-		<Description>KiBoards</Description>
-		<PackageTags>KiBoards</PackageTags>
+		<PackageId>KiBoards.xUnit</PackageId>
+		<AssemblyName>KiBoards.xUnit</AssemblyName>
+		<RootNamespace>KiBoards.xUnit</RootNamespace>
+		<Description>KiBoards.xUnit offers the capability to log xUnit test cases and test run results into Elasticsearch.</Description>
+		<PackageTags>KiBoards xUnit</PackageTags>
 		<RepositoryUrl>https://github.com/Jandini/KiBoards</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/Jandini/KiBoards</PackageProjectUrl>
 	</PropertyGroup>

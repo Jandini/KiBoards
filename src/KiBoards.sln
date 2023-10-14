@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards", "KiBoards\KiBoards.csproj", "{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards.xUnit", "KiBoards.xUnit\KiBoards.xUnit.csproj", "{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KiBoards.Tests", "KiBoards.Tests\KiBoards.Tests.csproj", "{BD23E63C-CC78-4714-A319-E492CC90178A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards.Tests", "KiBoards.Tests\KiBoards.Tests.csproj", "{BD23E63C-CC78-4714-A319-E492CC90178A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
