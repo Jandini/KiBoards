@@ -14,7 +14,7 @@ namespace KiBoards.Services
             _elasticService = elasticService;
 
             var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-            messageSink.OnMessage(new DiagnosticMessage($"Running KiBoards.xUnit: {version}"));
+            messageSink.OnMessage(new DiagnosticMessage($"Running KiBoards.Xunit: {version}"));
         }
 
         public async Task IndexTestRunAsync(TestRun testRun)

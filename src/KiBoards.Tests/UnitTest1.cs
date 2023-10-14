@@ -1,7 +1,8 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-[assembly: TestFramework("KiBoards.TestFramework", "KiBoards.xUnit")]
+[assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
+
 
 namespace KiBoards.Tests
 {
