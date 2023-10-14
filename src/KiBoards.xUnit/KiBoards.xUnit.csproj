@@ -21,7 +21,7 @@
 		<PackageId>KiBoards.Xunit</PackageId>
 		<AssemblyName>KiBoards.Xunit</AssemblyName>
 		<RootNamespace>KiBoards</RootNamespace>
-		<Description>KiBoards.Xunit offers the capability to log xUnit test cases and test run results into Elasticsearch.</Description>
+		<Description>KiBoards.Xunit offers the capability to log xunit test cases and test run results into Elasticsearch.</Description>
 		<PackageTags>KiBoards Xunit</PackageTags>
 		<RepositoryUrl>https://github.com/Jandini/KiBoards</RepositoryUrl>
 		<PackageProjectUrl>https://github.com/Jandini/KiBoards</PackageProjectUrl>
