@@ -1,5 +1,4 @@
-﻿using KiBoards.Models;
-using Nest;
+﻿using Nest;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 

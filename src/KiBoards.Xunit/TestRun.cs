@@ -1,4 +1,4 @@
-﻿using Xunit.Sdk;
+﻿using Nest;
 
 namespace KiBoards
 {
@@ -9,7 +9,10 @@ namespace KiBoards
         public string MachineName { get; internal set; }
         public string UserName { get; internal set; }
         public object Context { get; internal set; }
-        public RunSummary Summary { get; internal set; }
+        
+
+        [Object]
+        internal TestRunSummary Summary { get; set; }
 
         public TestRun()
         {
