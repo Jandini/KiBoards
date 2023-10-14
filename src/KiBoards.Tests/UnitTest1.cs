@@ -1,7 +1,7 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-[assembly: TestFramework("KiBoards.TestFramework", "KiBoards")]
+[assembly: TestFramework("KiBoards.TestFramework", "KiBoards.xUnit")]
 
 namespace KiBoards.Tests
 {
@@ -13,7 +13,6 @@ namespace KiBoards.Tests
         public UnitTest1(ITestOutputHelper testOutputHelper) 
         {
             _testOutputHelper = testOutputHelper;
-
             
         }
 

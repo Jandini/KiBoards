@@ -25,7 +25,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KiBoards\KiBoards.csproj" />
+    <ProjectReference Include="..\KiBoards.xUnit\KiBoards.xUnit.csproj" />
   </ItemGroup>
 
 </Project>

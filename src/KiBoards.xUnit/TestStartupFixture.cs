@@ -1,4 +1,4 @@
-﻿namespace KiBoards.Tests
+﻿namespace KiBoards
 {
     public class TestStartupFixture : IDisposable
     {
