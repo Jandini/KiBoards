@@ -39,7 +39,6 @@ namespace KiBoards.Services
                 {
                     DisplayName = testResult.TestCase.DisplayName,
                     UniqueId = testResult.TestCase.UniqueID,
-                    SourceInformation = testResult.TestCase.SourceInformation,
                     Traits = testResult.TestCase.Traits,
                     Method = new KiBoardsTestCaseMethod()
                     {

@@ -1,10 +1,7 @@
-﻿using Xunit.Abstractions;
-
-namespace KiBoards.Models
+﻿namespace KiBoards.Models
 {
     class KiBoardsTestCase
     {
-        public ISourceInformation SourceInformation { get; set; }
         public Dictionary<string, List<string>> Traits { get; set; }
         public string DisplayName { get; internal set; }
         public string UniqueId { get; internal set; }
