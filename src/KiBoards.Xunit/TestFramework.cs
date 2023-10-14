@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using KiBoards.Services;
-using Microsoft.Extensions.DependencyInjection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -10,40 +9,26 @@ namespace KiBoards
     {
         public static readonly TestRun TestRun = new();
 
-        private readonly ServiceProvider _serviceProvider;
-
+        readonly KiBoardsTestRunner _testRunner; 
+        
         public TestFramework(IMessageSink messageSink)
             : base(messageSink)
         {
-            IServiceCollection serviceCollection = new ServiceCollection();
-
-            serviceCollection
-                .AddSingleton(messageSink)
-                .AddElasticServices()
-                .AddSingleton<IKiBoardsTestRunnerService, KiBoardsTestRunnerService>();
-
-            _serviceProvider = serviceCollection.BuildServiceProvider();
+            _testRunner = new KiBoardsTestRunner(messageSink);
         }
 
         protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
-            return new TestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink, _serviceProvider.GetRequiredService<IKiBoardsTestRunnerService>());
-        }
-
-        public new async void Dispose()
-        {
-            await Task.Delay(1);
-            _serviceProvider.Dispose();
-            base.Dispose();
-        }
+            return new TestFrameworkExecutor(assemblyName, SourceInformationProvider, DiagnosticMessageSink, _testRunner);
+        }     
 
 
         private class TestFrameworkExecutor : XunitTestFrameworkExecutor
         {
-            private readonly IKiBoardsTestRunnerService _testRunner;
+            private readonly KiBoardsTestRunner _testRunner;
             private readonly IMessageSink _diagnosticMessageSink;
 
-            public TestFrameworkExecutor(AssemblyName assemblyName, ISourceInformationProvider sourceInformationProvider, IMessageSink diagnosticMessageSink, IKiBoardsTestRunnerService testRunner)
+            public TestFrameworkExecutor(AssemblyName assemblyName, ISourceInformationProvider sourceInformationProvider, IMessageSink diagnosticMessageSink, KiBoardsTestRunner testRunner)
                 : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
             {
                 _testRunner = testRunner;
@@ -72,9 +57,9 @@ namespace KiBoards
 
         private class TestAssemblyRunner : XunitTestAssemblyRunner
         {
-            private readonly IKiBoardsTestRunnerService _testRunner;
+            private readonly KiBoardsTestRunner _testRunner;
 
-            public TestAssemblyRunner(ITestAssembly testAssembly, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions, IKiBoardsTestRunnerService testRunner)
+            public TestAssemblyRunner(ITestAssembly testAssembly, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions, KiBoardsTestRunner testRunner)
                 : base(testAssembly, testCases, diagnosticMessageSink, executionMessageSink, executionOptions)
             {
                 _testRunner = testRunner;
@@ -96,9 +81,9 @@ namespace KiBoards
 
         private class TestCollectionRunner : XunitTestCollectionRunner
         {
-            private readonly IKiBoardsTestRunnerService _testRunner;
+            private readonly KiBoardsTestRunner _testRunner;
 
-            public TestCollectionRunner(ITestCollection testCollection, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ITestCaseOrderer testCaseOrderer, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, IKiBoardsTestRunnerService testRunner)
+            public TestCollectionRunner(ITestCollection testCollection, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ITestCaseOrderer testCaseOrderer, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, KiBoardsTestRunner testRunner)
                 : base(testCollection, testCases, diagnosticMessageSink, messageBus, testCaseOrderer, aggregator, cancellationTokenSource)
             {
                 _testRunner = testRunner;
@@ -112,9 +97,9 @@ namespace KiBoards
 
         private class TestClassRunner : XunitTestClassRunner
         {
-            private readonly IKiBoardsTestRunnerService _testRunner;
+            private readonly KiBoardsTestRunner _testRunner;
 
-            public TestClassRunner(ITestClass testClass, IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ITestCaseOrderer testCaseOrderer, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, IDictionary<Type, object> collectionFixtureMappings, IKiBoardsTestRunnerService testRunner)
+            public TestClassRunner(ITestClass testClass, IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ITestCaseOrderer testCaseOrderer, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, IDictionary<Type, object> collectionFixtureMappings, KiBoardsTestRunner testRunner)
                 : base(testClass, @class, testCases, diagnosticMessageSink, messageBus, testCaseOrderer, aggregator, cancellationTokenSource, collectionFixtureMappings)
             {
                 _testRunner = testRunner;
@@ -132,13 +117,36 @@ namespace KiBoards
 
 
 
+        private class TestResultBus : IMessageBus
+        {
+            private readonly IMessageBus _messageBus;
+
+            public ITestResultMessage TestResult { get; private set; }
+
+            internal TestResultBus(IMessageBus messsageBus) => _messageBus = messsageBus ?? throw new ArgumentNullException(nameof(messsageBus));
+
+
+            public bool QueueMessage(IMessageSinkMessage message)
+            {
+                if (message is ITestResultMessage result)
+                    TestResult = result;
+
+                return _messageBus.QueueMessage(message);
+            }
+
+            public void Dispose()
+            {
+                _messageBus.Dispose();
+            }
+        }
+
         private class TestMethodRunner : XunitTestMethodRunner
         {
-            private readonly IKiBoardsTestRunnerService _testRunner;
+            private readonly KiBoardsTestRunner _testRunner;
             private readonly TestResultBus _resultBus;
             private readonly IMessageSink _diagnosticMessageSink;
 
-            public TestMethodRunner(ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, TestResultBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments, IKiBoardsTestRunnerService testRunner)
+            public TestMethodRunner(ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, TestResultBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments, KiBoardsTestRunner testRunner)
                  : base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource, constructorArguments)
 
             {

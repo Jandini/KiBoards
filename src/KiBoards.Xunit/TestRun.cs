@@ -9,7 +9,7 @@ namespace KiBoards
         public string MachineName { get; internal set; }
         public string UserName { get; internal set; }
         public object Context { get; internal set; }
-        public RunSummary Summary { get; set; }
+        public RunSummary Summary { get; internal set; }
 
         public TestRun()
         {

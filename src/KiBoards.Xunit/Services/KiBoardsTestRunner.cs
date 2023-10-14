@@ -1,20 +1,35 @@
 ﻿using KiBoards.Models;
+using Nest;
 using System.Reflection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace KiBoards.Services
 {
-    internal class KiBoardsTestRunnerService : IKiBoardsTestRunnerService
+    internal class KiBoardsTestRunner
     {
-        private readonly IKiBoardsElasticService _elasticService;
+        private readonly KiBoardsElasticClient _elasticService;
 
-        public KiBoardsTestRunnerService(IMessageSink messageSink, IKiBoardsElasticService elasticService)
-        {            
-            _elasticService = elasticService;
+        public KiBoardsTestRunner(IMessageSink messageSink)
+        {
+            var uriString = Environment.GetEnvironmentVariable("KIBS_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
+            var connectionSettings = new ConnectionSettings(new Uri(uriString));
+
+            var elasticClient = new ElasticClient(connectionSettings
+                .DefaultMappingFor<TestRun>(m => m
+                    .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
+                    .IdProperty(p => p.Id))
+                .DefaultMappingFor<KiBoardsTestCaseRun>(m => m
+                    .IndexName($"kiboards-testcases-{DateTime.UtcNow:yyyy-MM}"))
+                .MaxRetryTimeout(TimeSpan.FromMinutes(5))
+                .EnableApiVersioningHeader() 
+                .MaximumRetries(3));
+            
+
+            _elasticService = new KiBoardsElasticClient(elasticClient, messageSink);
 
             var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-            messageSink.OnMessage(new DiagnosticMessage($"Running KiBoards.Xunit: {version}"));
+            messageSink.OnMessage(new DiagnosticMessage($"KiBoards.Xunit {version} logging to {uriString}"));
         }
 
         public async Task IndexTestRunAsync(TestRun testRun)
@@ -61,6 +76,6 @@ namespace KiBoards.Services
                 Skipped = testResult is ITestSkipped skipped ? new KiBoardsTestCaseRunSkipped() { Reason = skipped.Reason } : null,
                 Status = testResult is ITestPassed ? "Passed" : testResult is ITestFailed ? "Failed" : testResult is ITestSkipped ? "Skipped" : "Other"
             }); 
-        }      
+        }        
     }
 }

@@ -1,21 +1,20 @@
-﻿using Nest;
+﻿using KiBoards.Models;
+using Nest;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
 namespace KiBoards.Services
 {
-    internal class KiBoardsElasticService : IKiBoardsElasticService
+    internal class KiBoardsElasticClient 
     {
         private readonly IElasticClient _elasticClient;
         private readonly IMessageSink _messageSink;
 
-        public KiBoardsElasticService(IElasticClient elasticClient, IMessageSink messageSink)
+        public KiBoardsElasticClient(IElasticClient elasticClient, IMessageSink messageSink)
         {
             _elasticClient = elasticClient;
             _messageSink = messageSink;
         }
-       
-
         public async Task IndexDocumentAsync<T>(T document) where T: class
         {
             try
