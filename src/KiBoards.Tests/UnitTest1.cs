@@ -1,7 +1,7 @@
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
-[assembly: TestFramework("KiBoards.TestFramework", "KiBoards")]
+[assembly: TestFramework("KiBoards.TestFramework", "KiBoards.xUnit")]
 
 namespace KiBoards.Tests
 {
@@ -13,7 +13,6 @@ namespace KiBoards.Tests
         public UnitTest1(ITestOutputHelper testOutputHelper) 
         {
             _testOutputHelper = testOutputHelper;
-
             
         }
 
@@ -25,18 +24,18 @@ namespace KiBoards.Tests
             Thread.Sleep(1000);
         }
 
-        [Fact]
-        public void Test2()
-        {
-            Assert.Equal(1, 2);
-        }
+        //[Fact]
+        //public void Test2()
+        //{
+        //    Assert.Equal(1, 2);
+        //}
 
 
-        [Fact]
-        public void Test3()
-        {
-            throw new NotImplementedException();
-        }
+        //[Fact]
+        //public void Test3()
+        //{
+        //    throw new NotImplementedException();
+        //}
 
         [Fact(Skip = "Not required.")]
         public void Test4()

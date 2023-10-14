@@ -8,7 +8,9 @@ namespace KiBoards.Services
     {
         internal static IServiceCollection AddElasticServices(this IServiceCollection services)
         {
-            var connectionSettings = new ConnectionSettings(new Uri(Environment.GetEnvironmentVariable("KIBS_ELASTICSEARCH_HOST") ?? "http://localhost:9200"));
+            var uriString = Environment.GetEnvironmentVariable("KIBS_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
+
+            var connectionSettings = new ConnectionSettings(new Uri(uriString));
 
             return services
                 .AddSingleton<IElasticClient>(new ElasticClient(ConfigureIndexes(connectionSettings

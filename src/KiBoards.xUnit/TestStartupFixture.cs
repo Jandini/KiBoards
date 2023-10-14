@@ -1,10 +1,15 @@
 ﻿namespace KiBoards
 {
-    public class TestStartupFixture 
-    {        
+    public class TestStartupFixture : IDisposable
+    {
         public void SetContext(object context)
         {
-            TestFramework.TestRun.Context = context; 
+            TestFramework.TestRun.Context = context;
+        }
+
+        public void Dispose()
+        {
+            
         }
     }
 }
