@@ -111,12 +111,9 @@ namespace KiBoards
             public TestClassRunner(ITestClass testClass, IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ITestCaseOrderer testCaseOrderer, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, IDictionary<Type, object> collectionFixtureMappings, KiBoardsTestRunner testRunner)
                 : base(testClass, @class, testCases, diagnosticMessageSink, messageBus, testCaseOrderer, aggregator, cancellationTokenSource, collectionFixtureMappings)
             {
-                var name = string.Join(",", testCases.Select(a => Path.GetFileNameWithoutExtension(a.TestMethod.TestClass.Class.Assembly.AssemblyPath)).Distinct());
-                var md5 = MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(string.Join(",", testCases.OrderBy(a => a.UniqueID).Select(a => a.UniqueID))));
+                TestRun.Name = string.Join(",", testCases.Select(a => Path.GetFileNameWithoutExtension(a.TestMethod.TestClass.Class.Assembly.AssemblyPath)).Distinct());
+                TestRun.Hash = string.Join(",", testCases.OrderBy(a => a.UniqueID).Select(a => a.UniqueID)).ComputeMD5();
 
-                TestRun.Name = name;                
-                TestRun.Hash = BitConverter.ToString(md5).Replace("-", "").ToLower();
-                
                 _testRunner = testRunner;
             }
 
