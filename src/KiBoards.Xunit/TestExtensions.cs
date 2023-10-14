@@ -1,11 +1,10 @@
-﻿using System.Reflection;
-using Xunit.Abstractions;
+﻿using System.Security.Cryptography;
+using System.Text;
 
 namespace KiBoards
 {
-    public static class TestExtensions
-    {
-        public static ITestCase GetTestCase(this ITestOutputHelper output)
-            => (output.GetType().GetField("test", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(output) as ITest).TestCase;
+    internal static class TestExtensions
+    {     
+        public static string ComputeMD5(this string value) => BitConverter.ToString(MD5.Create().ComputeHash(Encoding.UTF8.GetBytes(value))).Replace("-", "").ToLower();
     }
 }

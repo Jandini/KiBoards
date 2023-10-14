@@ -42,6 +42,7 @@ namespace KiBoards.Services
         {
             await _elasticService.IndexDocumentAsync(new KiBoardsTestCaseRun()
             {
+                Id = (TestFramework.TestRun.Id + testResult.TestCase.UniqueID).ComputeMD5(),
                 TestRun = TestFramework.TestRun,
                 ExecutionTime = testResult.ExecutionTime,
                 Output = testResult.Output,
