@@ -5,6 +5,8 @@ namespace KiBoards
     public class TestRun
     {
         public string Id { get; internal set; }
+        public string Name { get; internal set; }
+        public string Hash {  get; internal set; }
         public DateTime StartTime { get; internal set; }
         public string MachineName { get; internal set; }
         public string UserName { get; internal set; }
