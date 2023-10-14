@@ -8,6 +8,8 @@ namespace KiBoards
 {
     public class TestFramework : XunitTestFramework, IDisposable
     {
+        public static readonly TestRun TestRun = new();
+
         private readonly ServiceProvider _serviceProvider;
 
         public TestFramework(IMessageSink messageSink)
@@ -39,26 +41,29 @@ namespace KiBoards
         private class TestFrameworkExecutor : XunitTestFrameworkExecutor
         {
             private readonly IKiBoardsTestRunnerService _testRunner;
+            private readonly IMessageSink _diagnosticMessageSink;
 
             public TestFrameworkExecutor(AssemblyName assemblyName, ISourceInformationProvider sourceInformationProvider, IMessageSink diagnosticMessageSink, IKiBoardsTestRunnerService testRunner)
                 : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
             {
                 _testRunner = testRunner;
+                _diagnosticMessageSink = diagnosticMessageSink;
             }
+
+            
 
             protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
             {
                 try
                 {
-                    await _testRunner.BeginTestCasesRunAsync(testCases);
-                    using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, new TestMessageSink(DiagnosticMessageSink, _testRunner), executionMessageSink, executionOptions, _testRunner);
+                    using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _testRunner);
+                    TestRun.Summary = await assemblyRunner.RunAsync();
+                    await _testRunner.IndexTestRunAsync(TestRun);
 
-                    var results = await assemblyRunner.RunAsync();
-                    await _testRunner.EndTestCasesRunAsync(results);
                 }
                 catch (Exception ex)
                 {
-                    await _testRunner.ErrorTestCasesRunAsync(testCases, ex);
+                    _diagnosticMessageSink.OnMessage(new DiagnosticMessage(ex.Message, ex.StackTrace));
                 }
             }
         }
@@ -68,17 +73,12 @@ namespace KiBoards
         private class TestAssemblyRunner : XunitTestAssemblyRunner
         {
             private readonly IKiBoardsTestRunnerService _testRunner;
-            private readonly IMessageSink _messageSink;
 
             public TestAssemblyRunner(ITestAssembly testAssembly, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions, IKiBoardsTestRunnerService testRunner)
                 : base(testAssembly, testCases, diagnosticMessageSink, executionMessageSink, executionOptions)
             {
                 _testRunner = testRunner;
-                _messageSink = diagnosticMessageSink;
             }
-
-
-
 
             protected override async Task<RunSummary> RunTestCollectionAsync(IMessageBus messageBus, ITestCollection testCollection, IEnumerable<IXunitTestCase> testCases, CancellationTokenSource cancellationTokenSource)
             {
@@ -90,20 +90,7 @@ namespace KiBoards
             {
                 var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
                 return $"KiBoards {version}";
-            }
-
-            protected override Task AfterTestAssemblyStartingAsync()
-            {
-                _messageSink.OnMessage(new DiagnosticMessage("AfterTestAssemblyStartingAsync"));
-                return base.AfterTestAssemblyStartingAsync();
-            }
-
-
-            protected override Task BeforeTestAssemblyFinishedAsync()
-            {
-                _messageSink.OnMessage(new DiagnosticMessage("BeforeTestAssemblyFinishedAsync"));
-                return base.BeforeTestAssemblyFinishedAsync();
-            }
+            }         
         }
 
 
@@ -148,35 +135,32 @@ namespace KiBoards
         private class TestMethodRunner : XunitTestMethodRunner
         {
             private readonly IKiBoardsTestRunnerService _testRunner;
-            private readonly TestResultSink _resultSink;
             private readonly TestResultBus _resultBus;
+            private readonly IMessageSink _diagnosticMessageSink;
 
             public TestMethodRunner(ITestMethod testMethod, IReflectionTypeInfo @class, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, TestResultBus messageBus, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, object[] constructorArguments, IKiBoardsTestRunnerService testRunner)
                  : base(testMethod, @class, method, testCases, diagnosticMessageSink, messageBus, aggregator, cancellationTokenSource, constructorArguments)
 
             {
+                _diagnosticMessageSink = diagnosticMessageSink;
                 _resultBus = messageBus;
                 _testRunner = testRunner;
             }
 
             protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
             {
+                var result = await base.RunTestCaseAsync(testCase);
+
                 try
                 {
-                    await _testRunner.StartTestCaseAsync(testCase, TestMethod);
-                    var result = await base.RunTestCaseAsync(testCase);
-
-                    var testResult = _resultBus.TestResult;
-
-                    await _testRunner.FinishTestCaseAsync(testCase, TestMethod, Aggregator, result);
-
-                    return result;
+                    await _testRunner.IndexTestCaseRunAsync(_resultBus.TestResult);
                 }
                 catch (Exception ex)
                 {
-                    await _testRunner.ErrorTestCaseAsync(testCase, TestMethod, ex);
-                    throw;
+                    _diagnosticMessageSink.OnMessage(new DiagnosticMessage(ex.Message, ex.StackTrace));
                 }
+
+                return result;
             }
         }
     }

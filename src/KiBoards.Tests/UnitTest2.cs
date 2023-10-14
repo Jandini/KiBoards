@@ -1,25 +1,18 @@
-
-using Microsoft.VisualStudio.TestPlatform.Utilities;
-using System.Reflection;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace KiBoards.Tests
 {
 
+    [Trait("TestGroup", "UnitTest2")]    
     public class UnitTest2 : IClassFixture<TestContextFixture>
     {
 
-        public UnitTest2(TestContextFixture testContextFixture, ITestOutputHelper outputHelper)
-        {
-            // This is how to get messageBus
-
-            testContextFixture.SetContext(new { Version = "1234" });
-
+        public UnitTest2(ITestOutputHelper outputHelper)
+        {            
             outputHelper.WriteLine("HELLO WORLD MESSAGE BUS");
         }
 
-        [Fact(Timeout = 1000)]
+        [Fact(Skip = "Excluded", Timeout = 1000)]
         public void Test5()
         {
             Thread.Sleep(5000);
@@ -27,6 +20,7 @@ namespace KiBoards.Tests
            
         }
 
+        [Trait("TestType", "Test6")]
         [Theory]
         [InlineData(1, 2)]
         [InlineData(2, 2)]
@@ -38,6 +32,7 @@ namespace KiBoards.Tests
 
 
         [Fact]
+        [Trait("TestType", "Test7")]
         public void Test7()
         {
             throw new NotImplementedException();
