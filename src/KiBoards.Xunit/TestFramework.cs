@@ -33,16 +33,23 @@ namespace KiBoards
             {
                 _testRunner = testRunner;
                 _diagnosticMessageSink = diagnosticMessageSink;
-            }
-
-            
+            }            
 
             protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
             {
                 try
                 {
                     using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _testRunner);
-                    TestRun.Summary = await assemblyRunner.RunAsync();
+                    var summary = await assemblyRunner.RunAsync();
+                    
+                    TestRun.Summary = new TestRunSummary()
+                    {
+                        Total = summary.Total,
+                        Failed = summary.Failed,
+                        Skipped = summary.Skipped,
+                        Time = summary.Time,
+                    };
+
                     await _testRunner.IndexTestRunAsync(TestRun);
 
                 }

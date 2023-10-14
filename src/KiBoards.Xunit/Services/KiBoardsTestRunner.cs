@@ -16,11 +16,12 @@ namespace KiBoards.Services
             var connectionSettings = new ConnectionSettings(new Uri(uriString));
 
             var elasticClient = new ElasticClient(connectionSettings
-                .DefaultMappingFor<TestRun>(m => m
+                .DefaultMappingFor<TestRun>(m => m                    
                     .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
                     .IdProperty(p => p.Id))
-                .DefaultMappingFor<KiBoardsTestCaseRun>(m => m
+                .DefaultMappingFor<KiBoardsTestCaseRun>(m => m                    
                     .IndexName($"kiboards-testcases-{DateTime.UtcNow:yyyy-MM}"))
+                    
                 .MaxRetryTimeout(TimeSpan.FromMinutes(5))
                 .EnableApiVersioningHeader() 
                 .MaximumRetries(3));
