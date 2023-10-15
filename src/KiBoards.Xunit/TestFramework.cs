@@ -1,6 +1,4 @@
 ﻿using System.Reflection;
-using System.Security.Cryptography;
-using System.Text;
 using KiBoards.Services;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -8,16 +6,15 @@ using Xunit.Sdk;
 namespace KiBoards
 {
     public class TestFramework : XunitTestFramework, IDisposable
-    {
-        public static readonly TestRun TestRun = new();
+    {        
+        readonly KiBoardsTestRunner _testRunner;               
 
-        readonly KiBoardsTestRunner _testRunner; 
-        
         public TestFramework(IMessageSink messageSink)
             : base(messageSink)
-        {
+        {          
             _testRunner = new KiBoardsTestRunner(messageSink);
         }
+
 
         protected override ITestFrameworkExecutor CreateExecutor(AssemblyName assemblyName)
         {
@@ -34,30 +31,23 @@ namespace KiBoards
                 : base(assemblyName, sourceInformationProvider, diagnosticMessageSink)
             {
                 _testRunner = testRunner;
-                _diagnosticMessageSink = diagnosticMessageSink;
+                _diagnosticMessageSink = diagnosticMessageSink;                             
             }            
+
+         
 
             protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
             {
                 try
                 {
                     using var assemblyRunner = new TestAssemblyRunner(TestAssembly, testCases, DiagnosticMessageSink, executionMessageSink, executionOptions, _testRunner);
-                    var summary = await assemblyRunner.RunAsync();
-                    
-                    TestRun.Summary = new TestRunSummary()
-                    {
-                        Total = summary.Total,
-                        Failed = summary.Failed,
-                        Skipped = summary.Skipped,
-                        Time = summary.Time,
-                    };
-
-                    await _testRunner.IndexTestRunAsync(TestRun);
+                    var summary = await assemblyRunner.RunAsync();                    
+                    await _testRunner.IndexTestRunAsync(summary);
 
                 }
                 catch (Exception ex)
                 {
-                    _diagnosticMessageSink.OnMessage(new DiagnosticMessage(ex.Message, ex.StackTrace));
+                    _diagnosticMessageSink.WriteException(ex);
                 }
             }
         }
@@ -80,11 +70,7 @@ namespace KiBoards
                 return await collectionRunner.RunAsync();
             }
 
-            protected override string GetTestFrameworkDisplayName()
-            {
-                var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-                return $"KiBoards {version}";
-            }         
+            protected override string GetTestFrameworkDisplayName() => $"KiBoards {_testRunner.Version}";
         }
 
 
@@ -110,21 +96,14 @@ namespace KiBoards
 
             public TestClassRunner(ITestClass testClass, IReflectionTypeInfo @class, IEnumerable<IXunitTestCase> testCases, IMessageSink diagnosticMessageSink, IMessageBus messageBus, ITestCaseOrderer testCaseOrderer, ExceptionAggregator aggregator, CancellationTokenSource cancellationTokenSource, IDictionary<Type, object> collectionFixtureMappings, KiBoardsTestRunner testRunner)
                 : base(testClass, @class, testCases, diagnosticMessageSink, messageBus, testCaseOrderer, aggregator, cancellationTokenSource, collectionFixtureMappings)
-            {
-                TestRun.Name = string.Join(",", testCases.Select(a => Path.GetFileNameWithoutExtension(a.TestMethod.TestClass.Class.Assembly.AssemblyPath)).Distinct());
-                TestRun.Hash = string.Join(",", testCases.OrderBy(a => a.UniqueID).Select(a => a.UniqueID)).ComputeMD5();
-
+            {                
                 _testRunner = testRunner;
+                testRunner.AddTestCases(testCases);
             }
 
             protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments)
                 => new TestMethodRunner(testMethod, Class, method, testCases, DiagnosticMessageSink, new TestResultBus(MessageBus), new ExceptionAggregator(Aggregator), CancellationTokenSource, constructorArguments, _testRunner)
-                    .RunAsync();
-
-            protected override async Task<RunSummary> RunTestMethodsAsync()
-            {
-                return await base.RunTestMethodsAsync();
-            }
+                    .RunAsync();            
         }
 
 
@@ -177,7 +156,7 @@ namespace KiBoards
                 }
                 catch (Exception ex)
                 {
-                    _diagnosticMessageSink.OnMessage(new DiagnosticMessage(ex.Message, ex.StackTrace));
+                    _diagnosticMessageSink.WriteException(ex);
                 }
 
                 return result;
