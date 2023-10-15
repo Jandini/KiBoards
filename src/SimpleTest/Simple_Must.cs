@@ -1,4 +1,5 @@
 [assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
+[assembly: TestStartup("SimpleTest.Startup")]
 
 namespace SimpleTest
 {   
@@ -11,6 +12,12 @@ namespace SimpleTest
             var c = 1 / b;
 
             Assert.Equal(0, a);
+        }
+
+        [Fact]
+        public void Pass()
+        {
+            Assert.Equal(0, 0);
         }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using KiBoards.Models;
 using Nest;
+using System.Collections;
 using System.Reflection;
 using Xunit.Abstractions;
 using Xunit.Sdk;
@@ -9,41 +10,107 @@ namespace KiBoards.Services
     internal class KiBoardsTestRunner
     {
         private readonly KiBoardsElasticClient _elasticService;
+        private readonly KiBoardsTestRun _testRun;
+
+        public string Version {  get; private set; }
 
         public KiBoardsTestRunner(IMessageSink messageSink)
         {
-            var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
-            var connectionSettings = new ConnectionSettings(new Uri(uriString));
+            try
+            {
+                _testRun = new KiBoardsTestRun()
+                {
+                    Id = Guid.NewGuid().ToString(),
+                    StartTime = DateTime.UtcNow,
+                    MachineName = Environment.MachineName,
+                    UserName = Environment.UserName,
+                    Variables = new Dictionary<string, string>()
+                };
 
-            var elasticClient = new ElasticClient(connectionSettings
-                .DefaultMappingFor<TestRun>(m => m                    
-                    .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
-                    .IdProperty(p => p.Id))
-                .DefaultMappingFor<KiBoardsTestCaseRun>(m => m                    
-                    .IndexName($"kiboards-testcases-{DateTime.UtcNow:yyyy-MM}"))
-                    
-                .MaxRetryTimeout(TimeSpan.FromMinutes(5))
-                .EnableApiVersioningHeader() 
-                .MaximumRetries(3));
-            
+                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<TestStartupAttribute>() != null))
+                    Startup(assembly, messageSink);
 
-            _elasticService = new KiBoardsElasticClient(elasticClient, messageSink);
+                foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
+                {
+                    var name = entry.Key.ToString();
+                    var value = entry.Value.ToString();
 
-            var version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
-            messageSink.OnMessage(new DiagnosticMessage($"KiBoards.Xunit {version} logging to {uriString}"));
+                    const string prefix = "KIB_VAR_";
+
+                    if (name.Length > prefix.Length + 1 && name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(value))
+                        _testRun.Variables.TryAdd(name[prefix.Length..], value);
+                }
+
+                var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
+                var connectionSettings = new ConnectionSettings(new Uri(uriString));
+
+                var elasticClient = new ElasticClient(connectionSettings
+                    .DefaultMappingFor<KiBoardsTestRun>(m => m
+                        .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
+                        .IdProperty(p => p.Id))
+                    .DefaultMappingFor<KiBoardsTestCaseRun>(m => m
+                        .IndexName($"kiboards-testcases-{DateTime.UtcNow:yyyy-MM}"))
+
+                    .MaxRetryTimeout(TimeSpan.FromMinutes(5))
+                    .EnableApiVersioningHeader()
+                    .MaximumRetries(3));
+
+                _elasticService = new KiBoardsElasticClient(elasticClient, messageSink);
+
+                Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+                messageSink.WriteMessage($"KiBoards.Xunit {Version} logging to {uriString}");
+            }
+            catch (Exception ex)
+            {
+                messageSink.WriteException(ex);
+            }
         }
 
-        public async Task IndexTestRunAsync(TestRun testRun)
+
+        private void Startup(Assembly assembly, IMessageSink messageSink)
         {
-            await _elasticService.IndexDocumentAsync(testRun);
+            try
+            {
+                var startup = assembly.GetCustomAttribute<TestStartupAttribute>();
+                Type type = assembly.GetType(startup.ClassName);
+
+                if (type != null)
+                {
+                    if (type.GetConstructor(new Type[] { typeof(string), typeof(IMessageSink) }) != null)
+                        Activator.CreateInstance(type, _testRun.Id, messageSink);
+                    else if (type.GetConstructor(new Type[] { typeof(string) }) != null)
+                        Activator.CreateInstance(type, _testRun.Id);
+                    else if (type.GetConstructor(new Type[] { typeof(IMessageSink) }) != null)
+                        Activator.CreateInstance(type, messageSink);
+                    else if (type.GetConstructor(new Type[] { }) != null)
+                        Activator.CreateInstance(type);
+                }
+            }
+            catch (Exception ex)
+            {
+                messageSink.WriteException(ex);
+            }
+        }
+
+        public async Task IndexTestRunAsync(RunSummary summary)
+        {
+            _testRun.Summary = new KiBoardsTestRunSummary()
+            {
+                Total = summary.Total,
+                Failed = summary.Failed,
+                Skipped = summary.Skipped,
+                Time = summary.Time,
+            };
+
+            await _elasticService.IndexDocumentAsync(_testRun);
         }
 
         public async Task IndexTestCaseRunAsync(ITestResultMessage testResult)
         {
             await _elasticService.IndexDocumentAsync(new KiBoardsTestCaseRun()
             {
-                Id = (TestFramework.TestRun.Id + testResult.TestCase.UniqueID).ComputeMD5(),
-                TestRun = TestFramework.TestRun,
+                Id = (_testRun.Id + testResult.TestCase.UniqueID).ComputeMD5(),
+                TestRun = _testRun,
                 ExecutionTime = testResult.ExecutionTime,
                 Output = testResult.Output,
                 Failed = testResult is ITestFailed failed ? new KiBoardsTestCaseRunFailed()
@@ -78,6 +145,12 @@ namespace KiBoards.Services
                 Skipped = testResult is ITestSkipped skipped ? new KiBoardsTestCaseRunSkipped() { Reason = skipped.Reason } : null,
                 Status = testResult is ITestPassed ? "Passed" : testResult is ITestFailed ? "Failed" : testResult is ITestSkipped ? "Skipped" : "Other"
             }); 
-        }        
+        }
+
+        internal void AddTestCases(IEnumerable<IXunitTestCase> testCases)
+        {
+            _testRun.Name = string.Join(",", testCases.Select(a => Path.GetFileNameWithoutExtension(a.TestMethod.TestClass.Class.Assembly.AssemblyPath)).Distinct());
+            _testRun.Hash = string.Join(",", testCases.OrderBy(a => a.UniqueID).Select(a => a.UniqueID)).ComputeMD5();
+        }
     }
 }
