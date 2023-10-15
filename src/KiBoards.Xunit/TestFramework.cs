@@ -98,7 +98,7 @@ namespace KiBoards
                 : base(testClass, @class, testCases, diagnosticMessageSink, messageBus, testCaseOrderer, aggregator, cancellationTokenSource, collectionFixtureMappings)
             {                
                 _testRunner = testRunner;
-                testRunner.AddTestCases(testCases);
+                testRunner.UpdateRun(testCases);
             }
 
             protected override Task<RunSummary> RunTestMethodAsync(ITestMethod testMethod, IReflectionMethodInfo method, IEnumerable<IXunitTestCase> testCases, object[] constructorArguments)

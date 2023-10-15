@@ -18,12 +18,15 @@ namespace KiBoards.Services
         {
             try
             {
+                Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
                 _testRun = new KiBoardsTestRun()
                 {
                     Id = Guid.NewGuid().ToString(),
                     StartTime = DateTime.UtcNow,
                     MachineName = Environment.MachineName,
                     UserName = Environment.UserName,
+                    FrameworkVersion = Version,
                     Variables = new Dictionary<string, string>()
                 };
 
@@ -44,6 +47,7 @@ namespace KiBoards.Services
                 var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
                 var connectionSettings = new ConnectionSettings(new Uri(uriString));
 
+                
                 var elasticClient = new ElasticClient(connectionSettings
                     .DefaultMappingFor<KiBoardsTestRun>(m => m
                         .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
@@ -56,8 +60,7 @@ namespace KiBoards.Services
                     .MaximumRetries(3));
 
                 _elasticService = new KiBoardsElasticClient(elasticClient, messageSink);
-
-                Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+                
                 messageSink.WriteMessage($"KiBoards.Xunit {Version} logging to {uriString}");
             }
             catch (Exception ex)
@@ -101,6 +104,8 @@ namespace KiBoards.Services
                 Skipped = summary.Skipped,
                 Time = summary.Time,
             };
+
+            _testRun.Status = summary.Failed > 0 ? "Failed" : summary.Skipped == summary.Total ? "Skipped" : "Passed";
 
             await _elasticService.IndexDocumentAsync(_testRun);
         }
@@ -147,7 +152,7 @@ namespace KiBoards.Services
             }); 
         }
 
-        internal void AddTestCases(IEnumerable<IXunitTestCase> testCases)
+        internal void UpdateRun(IEnumerable<IXunitTestCase> testCases)
         {
             _testRun.Name = string.Join(",", testCases.Select(a => Path.GetFileNameWithoutExtension(a.TestMethod.TestClass.Class.Assembly.AssemblyPath)).Distinct());
             _testRun.Hash = string.Join(",", testCases.OrderBy(a => a.UniqueID).Select(a => a.UniqueID)).ComputeMD5();
