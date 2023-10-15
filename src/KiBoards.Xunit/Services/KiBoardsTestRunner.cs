@@ -12,7 +12,7 @@ namespace KiBoards.Services
 
         public KiBoardsTestRunner(IMessageSink messageSink)
         {
-            var uriString = Environment.GetEnvironmentVariable("KIBS_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
+            var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
             var connectionSettings = new ConnectionSettings(new Uri(uriString));
 
             var elasticClient = new ElasticClient(connectionSettings
