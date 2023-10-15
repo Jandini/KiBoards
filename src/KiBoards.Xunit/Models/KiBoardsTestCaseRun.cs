@@ -3,7 +3,7 @@
     class KiBoardsTestCaseRun
     {
         public string Id { get; internal set; }
-        public TestRun TestRun { get; set; }
+        public KiBoardsTestRun TestRun { get; set; }
         public KiBoardsTestCase TestCase { get; set; }
         public KiBoardsTestCaseRunSkipped Skipped { get; set; }
         public KiBoardsTestCaseRunFailed Failed { get; set; }

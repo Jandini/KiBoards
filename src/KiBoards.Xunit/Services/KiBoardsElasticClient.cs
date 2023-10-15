@@ -1,6 +1,5 @@
 ﻿using Nest;
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 namespace KiBoards.Services
 {
@@ -22,12 +21,12 @@ namespace KiBoards.Services
 
                 if (!result.IsValid)
                 {
-                    _messageSink.OnMessage(new DiagnosticMessage(result.DebugInformation));
+                    _messageSink.WriteMessage(result.DebugInformation);
                 }
             }
             catch (Exception ex)
             {
-                _messageSink.OnMessage(new DiagnosticMessage(ex.Message));
+                _messageSink.WriteException(ex);
             }
         }
     }

@@ -7,7 +7,7 @@ using Xunit.Sdk;
 namespace KiBoards.Tests
 {
     
-    public class UnitTest1 : IClassFixture<TestContextFixture>
+    public class UnitTest1 
     {
         readonly ITestOutputHelper _testOutputHelper;
 
@@ -19,8 +19,7 @@ namespace KiBoards.Tests
 
         [Fact]
         public void Test1()
-        {           
-            var testCase = _testOutputHelper.GetTestCase();
+        {                       
             
             Thread.Sleep(1000);
         }

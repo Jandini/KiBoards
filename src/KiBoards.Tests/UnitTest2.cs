@@ -5,7 +5,7 @@ namespace KiBoards.Tests
 {
 
     [Trait("TestGroup", "UnitTest2")]    
-    public class UnitTest2 : IClassFixture<TestContextFixture>
+    public class UnitTest2 
     {
 
         public UnitTest2(ITestOutputHelper outputHelper)

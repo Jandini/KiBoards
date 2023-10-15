@@ -1,6 +1,6 @@
-﻿namespace KiBoards
+﻿namespace KiBoards.Models
 {
-    class TestRunSummary
+    class KiBoardsTestRunSummary
     {
         /// <summary>
         /// The total number of tests run.
