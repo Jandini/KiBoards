@@ -3,7 +3,7 @@ using Xunit.Abstractions;
 namespace KiBoards.Tests
 {
 
-    public class UnitTest3 : IClassFixture<TestContextFixture>
+    public class UnitTest3 
     {
 
         public UnitTest3(ITestOutputHelper outputHelper)

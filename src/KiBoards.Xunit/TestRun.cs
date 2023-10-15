@@ -9,9 +9,7 @@ namespace KiBoards
         public string Hash {  get; internal set; }
         public DateTime StartTime { get; internal set; }
         public string MachineName { get; internal set; }
-        public string UserName { get; internal set; }
-        public object Context { get; internal set; }
-        
+        public string UserName { get; internal set; }       
 
         [Object]
         internal TestRunSummary Summary { get; set; }
