@@ -5,11 +5,15 @@ VisualStudioVersion = 17.5.33516.290
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards.Xunit", "KiBoards.Xunit\KiBoards.Xunit.csproj", "{644D75DA-7457-4DC2-AD9B-2376A7C20BC1}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards.Tests", "KiBoards.Tests\KiBoards.Tests.csproj", "{BD23E63C-CC78-4714-A319-E492CC90178A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestFramework", "TestFramework\TestFramework.csproj", "{BD23E63C-CC78-4714-A319-E492CC90178A}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SimpleTest", "SimpleTest\SimpleTest.csproj", "{EF1D5D1A-6836-4F3C-9BAB-9FD5BEE0EEB5}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestObjects", "TestObjects\TestObjects.csproj", "{EF1D5D1A-6836-4F3C-9BAB-9FD5BEE0EEB5}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "KiBoards", "KiBoards\KiBoards.csproj", "{BA545090-C497-4AF5-835E-54BFFC1031D1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{7D41C48D-DBB6-4480-B78F-9F13B7505679}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "TestStartup", "TestStartup\TestStartup.csproj", "{3333C97D-D755-4A72-A621-852B38718AC1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,9 +37,18 @@ Global
 		{BA545090-C497-4AF5-835E-54BFFC1031D1}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BA545090-C497-4AF5-835E-54BFFC1031D1}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BA545090-C497-4AF5-835E-54BFFC1031D1}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3333C97D-D755-4A72-A621-852B38718AC1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3333C97D-D755-4A72-A621-852B38718AC1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3333C97D-D755-4A72-A621-852B38718AC1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3333C97D-D755-4A72-A621-852B38718AC1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{BD23E63C-CC78-4714-A319-E492CC90178A} = {7D41C48D-DBB6-4480-B78F-9F13B7505679}
+		{EF1D5D1A-6836-4F3C-9BAB-9FD5BEE0EEB5} = {7D41C48D-DBB6-4480-B78F-9F13B7505679}
+		{3333C97D-D755-4A72-A621-852B38718AC1} = {7D41C48D-DBB6-4480-B78F-9F13B7505679}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F7A87B3B-2908-4E34-AC90-13E68B977B90}

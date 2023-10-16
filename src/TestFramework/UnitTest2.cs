@@ -1,7 +1,7 @@
 using Xunit.Abstractions;
 
 
-namespace KiBoards.Tests
+namespace TestFramework
 {
 
     [Trait("TestGroup", "UnitTest2")]    

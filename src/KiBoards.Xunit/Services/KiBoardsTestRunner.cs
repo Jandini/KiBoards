@@ -31,6 +31,7 @@ namespace KiBoards.Services
                 };
 
                 var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<KiboardsTestStartupAttribute>() != null).ToArray();
+
                 foreach (var assembly in startupAssemblies)
                     Startup(assembly, messageSink);
 
