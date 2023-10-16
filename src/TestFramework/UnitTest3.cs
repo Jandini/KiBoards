@@ -1,6 +1,6 @@
 using Xunit.Abstractions;
 
-namespace KiBoards.Tests
+namespace TestFramework
 {
 
     public class UnitTest3 

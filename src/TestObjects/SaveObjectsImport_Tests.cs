@@ -1,10 +1,9 @@
 [assembly: KiBoardsSavedObjects()]
-[assembly: KiboardsTestStartup("SimpleTest.Startup")]
 [assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
 
-namespace SimpleTest
+namespace TestObjects
 {   
-    public class Simple_Must
+    public class SaveObjectsImport_Tests
     {
         [Theory]
         [InlineData(0, 2)]

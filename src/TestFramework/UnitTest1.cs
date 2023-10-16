@@ -1,12 +1,10 @@
 using Xunit.Abstractions;
-using Xunit.Sdk;
 
 [assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
 
-
-namespace KiBoards.Tests
+namespace TestFramework
 {
-    
+
     public class UnitTest1 
     {
         readonly ITestOutputHelper _testOutputHelper;
@@ -24,18 +22,18 @@ namespace KiBoards.Tests
             Thread.Sleep(1000);
         }
 
-        //[Fact]
-        //public void Test2()
-        //{
-        //    Assert.Equal(1, 2);
-        //}
+        [Fact]
+        public void Test2()
+        {
+            Assert.Equal(1, 2);
+        }
 
 
-        //[Fact]
-        //public void Test3()
-        //{
-        //    throw new NotImplementedException();
-        //}
+        [Fact]
+        public void Test3()
+        {
+            throw new NotImplementedException();
+        }
 
         [Fact(Skip = "Not required.")]
         public void Test4()
