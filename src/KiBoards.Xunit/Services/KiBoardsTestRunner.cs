@@ -30,7 +30,7 @@ namespace KiBoards.Services
                     Variables = new Dictionary<string, string>()
                 };
 
-                var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<TestStartupAttribute>() != null).ToArray();
+                var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<KiboardsTestStartupAttribute>() != null).ToArray();
                 foreach (var assembly in startupAssemblies)
                     Startup(assembly, messageSink);
 
@@ -74,7 +74,7 @@ namespace KiBoards.Services
         {
             try
             {                               
-                var startup = assembly.GetCustomAttribute<TestStartupAttribute>();
+                var startup = assembly.GetCustomAttribute<KiboardsTestStartupAttribute>();
                 Type type = assembly.GetType(startup.ClassName);
 
                 if (type != null)

@@ -2,7 +2,7 @@
 using System.Reflection;
 using Xunit.Abstractions;
 
-[assembly: TestStartup("KiBoards.Startup")]
+[assembly: KiboardsTestStartup("KiBoards.Startup")]
 
 namespace KiBoards
 {

@@ -32,9 +32,7 @@ namespace KiBoards
             {
                 _testRunner = testRunner;
                 _diagnosticMessageSink = diagnosticMessageSink;                             
-            }            
-
-         
+            }                     
 
             protected override async void RunTestCases(IEnumerable<IXunitTestCase> testCases, IMessageSink executionMessageSink, ITestFrameworkExecutionOptions executionOptions)
             {
@@ -51,7 +49,6 @@ namespace KiBoards
                 }
             }
         }
-
 
 
         private class TestAssemblyRunner : XunitTestAssemblyRunner
@@ -105,7 +102,6 @@ namespace KiBoards
                 => new TestMethodRunner(testMethod, Class, method, testCases, DiagnosticMessageSink, new TestResultBus(MessageBus), new ExceptionAggregator(Aggregator), CancellationTokenSource, constructorArguments, _testRunner)
                     .RunAsync();            
         }
-
 
 
         private class TestResultBus : IMessageBus
