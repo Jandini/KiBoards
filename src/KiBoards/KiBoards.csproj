@@ -46,4 +46,10 @@
 	<ItemGroup>
 	  <ProjectReference Include="..\KiBoards.Xunit\KiBoards.Xunit.csproj" />
 	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="KiBoards.ndjson">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	</ItemGroup>
 </Project>

@@ -30,7 +30,8 @@ namespace KiBoards.Services
                     Variables = new Dictionary<string, string>()
                 };
 
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<TestStartupAttribute>() != null))
+                var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<TestStartupAttribute>() != null).ToArray();
+                foreach (var assembly in startupAssemblies)
                     Startup(assembly, messageSink);
 
                 foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
@@ -74,11 +75,15 @@ namespace KiBoards.Services
         {
             try
             {
+                
+                
                 var startup = assembly.GetCustomAttribute<TestStartupAttribute>();
                 Type type = assembly.GetType(startup.ClassName);
 
                 if (type != null)
                 {
+                    messageSink.WriteMessage($"Invoking {type.FullName}");
+
                     if (type.GetConstructor(new Type[] { typeof(string), typeof(IMessageSink) }) != null)
                         Activator.CreateInstance(type, _testRun.Id, messageSink);
                     else if (type.GetConstructor(new Type[] { typeof(string) }) != null)

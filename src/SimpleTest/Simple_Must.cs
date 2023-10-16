@@ -1,3 +1,4 @@
+[assembly: KiBoards()]
 [assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
 [assembly: TestStartup("SimpleTest.Startup")]
 

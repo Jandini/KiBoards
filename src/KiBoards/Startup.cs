@@ -7,7 +7,7 @@ using Xunit.Sdk;
 namespace KiBoards
 {
     public class Startup
-    {
+    {       
         static void WriteMessage(IMessageSink messageSink, string message)
         {
             messageSink.OnMessage(new DiagnosticMessage(message));
@@ -21,12 +21,39 @@ namespace KiBoards
                 var kibanaUri = new Uri(Environment.GetEnvironmentVariable("KIB_KIBANA_HOST") ?? "http://localhost:5601");
                 var kibanaClient = new KiBoardsKibanaClient(kibanaUri, httpClient);
 
-                WriteMessage(messageSink, $"Waiting for Kibana {kibanaUri}");
+                messageSink.WriteMessage($"Waiting for Kibana {kibanaUri}");
 
-                await kibanaClient.WaitForKibanaAsync(CancellationToken.None);
-                await kibanaClient.SetDarkModeAsync(true, CancellationToken.None);                
-            });
-            
+                while (true)
+                {
+                    try
+                    {
+                        var response = await kibanaClient.GetStatus(CancellationToken.None);
+
+                        string level = response?.Status?.Overall?.Level ?? throw new Exception("Kibana status is not available.");
+
+                        if (level != "available")
+                            throw new Exception("Kibana not available.");
+
+                        messageSink.WriteMessage($"Kibana status: {level}");
+                        break;
+                    }
+                    catch (Exception ex)
+                    {
+                        messageSink.WriteMessage(ex.Message);
+                        await Task.Delay(5000);
+                    }
+                }
+
+                var ndjsonFiles =  Directory.GetFiles(Directory.GetCurrentDirectory(), "*.ndjson");
+
+                messageSink.WriteMessage($"Found {ndjsonFiles.Length} ndjson file(s)");
+
+                foreach (var ndjsonFile in ndjsonFiles) {
+                    WriteMessage(messageSink, $"Imporing {ndjsonFile}");
+                    var results = await kibanaClient.ImportSavedObjectsAsync(ndjsonFile);
+                    WriteMessage(messageSink, $"Import {results.Success} {results.SuccessCount}");
+                }
+            });            
         }
     }
 }
