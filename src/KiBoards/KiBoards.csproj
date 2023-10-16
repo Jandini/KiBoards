@@ -48,7 +48,10 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <None Update="KiBoards.ndjson">
+	  <None Update="KiBoards.02.TestRuns.Search.ndjson">
+	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+	  </None>
+	  <None Update="KiBoards.01.TestRuns.View.ndjson">
 	    <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
 	  </None>
 	</ItemGroup>

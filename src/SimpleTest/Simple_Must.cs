@@ -1,4 +1,4 @@
-[assembly: KiBoards()]
+[assembly: KiBoardsSavedObjects()]
 [assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
 [assembly: TestStartup("SimpleTest.Startup")]
 
