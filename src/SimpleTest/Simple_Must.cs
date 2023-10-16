@@ -18,6 +18,8 @@ namespace SimpleTest
         public void Pass()
         {
             Assert.Equal(0, 0);
+
+            Thread.Sleep(6000);
         }
     }
 }

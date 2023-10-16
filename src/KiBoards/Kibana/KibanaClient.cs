@@ -20,15 +20,19 @@ namespace KiBoards.Services
             response.EnsureSuccessStatusCode();
         }
 
-        public async Task WaitForKibanaAsync(CancellationToken cancellationToken)
-        {
-            var delay = 5000;
 
+        public async Task<KibanaStatusResponse> GetStatus(CancellationToken cancellationToken) => await _httpClient.GetFromJsonAsync<KibanaStatusResponse>("api/status", cancellationToken);
+
+
+
+        public async Task WaitForKibanaAsync(CancellationToken cancellationToken, int retryDelay = 5000)
+        {
             while (!cancellationToken.IsCancellationRequested) 
             {
                 try
-                {                    
-                    var response = await _httpClient.GetFromJsonAsync<KibanaStatusResponse>("api/status", cancellationToken);
+                {
+                    var response = await GetStatus(cancellationToken);
+                    
                     string level = response?.Status?.Overall?.Level ?? throw new Exception("Kibana status is not available.");
 
                     if (level != "available")
@@ -38,7 +42,7 @@ namespace KiBoards.Services
                 }
                 catch (Exception)
                 {
-                    await Task.Delay(delay, cancellationToken);
+                    await Task.Delay(retryDelay, cancellationToken);
                 }
             }
         }
