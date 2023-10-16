@@ -1,0 +1,44 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.1</TargetFramework>
+		<BaseOutputPath>..\..\bin</BaseOutputPath>
+		<ImplicitUsings>enable</ImplicitUsings>
+		<LangVersion>10</LangVersion>
+		<IsPackable>true</IsPackable>
+	</PropertyGroup>
+
+	<PropertyGroup Condition=" '$(Configuration)' == 'Release' ">
+		<DebugType>none</DebugType>
+		<DebugSymbols>false</DebugSymbols>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<Authors>Matt Janda</Authors>
+		<PackageIcon>icon.png</PackageIcon>
+		<PackageLicenseFile>LICENSE</PackageLicenseFile>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PackageId>KiBoards</PackageId>
+		<AssemblyName>KiBoards</AssemblyName>
+		<RootNamespace>KiBoards</RootNamespace>
+		<Description>KiBoards offers the capability to visualise test cases and test run in Kibana.</Description>
+		<PackageTags>KiBoards Xunit Kibana Elasticsearch</PackageTags>
+		<RepositoryUrl>https://github.com/Jandini/KiBoards</RepositoryUrl>
+		<PackageProjectUrl>https://github.com/Jandini/KiBoards</PackageProjectUrl>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<None Include="..\..\icon.png" Pack="true" PackagePath="" />
+		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
+		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
+	</ItemGroup>
+
+	<ItemGroup>
+
+		<PackageReference Include="GitVersion.MsBuild" Version="5.12.0">
+		  <PrivateAssets>all</PrivateAssets>
+		  <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+		</PackageReference>
+		<PackageReference Include="xunit" Version="2.4.2" />
+	</ItemGroup>
+</Project>
