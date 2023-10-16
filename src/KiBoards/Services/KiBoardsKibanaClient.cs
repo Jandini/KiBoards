@@ -1,12 +1,14 @@
 ﻿using System.Net.Http.Json;
+using KiBoards.Models.Settings;
+using KiBoards.Models.Status;
 
 namespace KiBoards.Services
 {
-    internal class KibanaClient 
+    internal class KiBoardsKibanaClient 
     {
         private readonly HttpClient _httpClient;        
 
-        public KibanaClient(HttpClient httpClinet, Uri kibanaUri)
+        public KiBoardsKibanaClient(Uri kibanaUri, HttpClient httpClinet)
         {
             _httpClient = httpClinet;    
             _httpClient.BaseAddress = kibanaUri;

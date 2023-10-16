@@ -1,4 +1,4 @@
-﻿namespace KiBoards.Services
+﻿namespace KiBoards.Models.Status
 {
     class KibanaStatus
     {
