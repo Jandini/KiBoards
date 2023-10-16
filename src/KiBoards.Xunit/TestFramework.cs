@@ -144,11 +144,12 @@ namespace KiBoards
 
             protected override async Task<RunSummary> RunTestCaseAsync(IXunitTestCase testCase)
             {
+                var startedAt = DateTime.UtcNow;
                 var result = await base.RunTestCaseAsync(testCase);
 
                 try
                 {
-                    await _testRunner.IndexTestCaseRunAsync(_resultBus.TestResult);
+                    await _testRunner.IndexTestCaseRunAsync(startedAt, _resultBus.TestResult);
                 }
                 catch (Exception ex)
                 {

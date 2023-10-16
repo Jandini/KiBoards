@@ -112,11 +112,13 @@ namespace KiBoards.Services
             await _elasticService.IndexDocumentAsync(_testRun);
         }
 
-        public async Task IndexTestCaseRunAsync(ITestResultMessage testResult)
+        public async Task IndexTestCaseRunAsync(DateTime startedAt, ITestResultMessage testResult)
         {
             await _elasticService.IndexDocumentAsync(new KiBoardsTestCaseRun()
             {
                 Id = (_testRun.Id + testResult.TestCase.UniqueID).ComputeMD5(),
+                StartedAt = startedAt,
+                FinishedAt = DateTime.UtcNow,
                 TestRun = _testRun,
                 ExecutionTime = testResult.ExecutionTime,
                 Output = testResult.Output,
