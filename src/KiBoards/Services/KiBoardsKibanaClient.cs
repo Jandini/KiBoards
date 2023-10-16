@@ -41,10 +41,7 @@ namespace KiBoards.Services
         }
 
 
-
         public async Task<KibanaStatusResponse> GetStatus() => await GetStatus(CancellationToken.None);
         public async Task<KibanaStatusResponse> GetStatus(CancellationToken cancellationToken) => await _httpClient.GetFromJsonAsync<KibanaStatusResponse>("api/status", cancellationToken);
-
-
     }
 }

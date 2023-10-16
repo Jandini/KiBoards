@@ -47,7 +47,6 @@ namespace KiBoards.Services
 
                 var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
                 var connectionSettings = new ConnectionSettings(new Uri(uriString));
-
                 
                 var elasticClient = new ElasticClient(connectionSettings
                     .DefaultMappingFor<KiBoardsTestRun>(m => m
@@ -74,9 +73,7 @@ namespace KiBoards.Services
         private void Startup(Assembly assembly, IMessageSink messageSink)
         {
             try
-            {
-                
-                
+            {                               
                 var startup = assembly.GetCustomAttribute<TestStartupAttribute>();
                 Type type = assembly.GetType(startup.ClassName);
 
