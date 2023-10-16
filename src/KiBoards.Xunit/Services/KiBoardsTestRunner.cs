@@ -30,7 +30,8 @@ namespace KiBoards.Services
                     Variables = new Dictionary<string, string>()
                 };
 
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<TestStartupAttribute>() != null))
+                var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<KiboardsTestStartupAttribute>() != null).ToArray();
+                foreach (var assembly in startupAssemblies)
                     Startup(assembly, messageSink);
 
                 foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
@@ -46,7 +47,6 @@ namespace KiBoards.Services
 
                 var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
                 var connectionSettings = new ConnectionSettings(new Uri(uriString));
-
                 
                 var elasticClient = new ElasticClient(connectionSettings
                     .DefaultMappingFor<KiBoardsTestRun>(m => m
@@ -73,12 +73,14 @@ namespace KiBoards.Services
         private void Startup(Assembly assembly, IMessageSink messageSink)
         {
             try
-            {
-                var startup = assembly.GetCustomAttribute<TestStartupAttribute>();
+            {                               
+                var startup = assembly.GetCustomAttribute<KiboardsTestStartupAttribute>();
                 Type type = assembly.GetType(startup.ClassName);
 
                 if (type != null)
                 {
+                    messageSink.WriteMessage($"Invoking {type.FullName}");
+
                     if (type.GetConstructor(new Type[] { typeof(string), typeof(IMessageSink) }) != null)
                         Activator.CreateInstance(type, _testRun.Id, messageSink);
                     else if (type.GetConstructor(new Type[] { typeof(string) }) != null)

@@ -10,6 +10,15 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="..\..\res\KiBoards.01.TestRuns.View.ndjson" Link="KiBoards.01.TestRuns.View.ndjson">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Include="..\..\res\KiBoards.02.TestRuns.Search.ndjson" Link="KiBoards.02.TestRuns.Search.ndjson">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
     <PackageReference Include="xunit" Version="2.4.2" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.5">
@@ -23,7 +32,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\KiBoards.Xunit\KiBoards.Xunit.csproj" />
+    <ProjectReference Include="..\KiBoards\KiBoards.csproj" />
   </ItemGroup>
 
 </Project>

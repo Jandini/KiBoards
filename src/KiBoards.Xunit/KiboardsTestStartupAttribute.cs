@@ -1,9 +1,9 @@
 ﻿[AttributeUsage(AttributeTargets.Assembly)]
-public class TestStartupAttribute : Attribute
+public class KiboardsTestStartupAttribute : Attribute
 {
     public string ClassName { get; set; }
 
-    public TestStartupAttribute(string className) 
+    public KiboardsTestStartupAttribute(string className) 
     { 
         ClassName = className;
     }

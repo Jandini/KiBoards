@@ -1,12 +1,13 @@
+[assembly: KiBoardsSavedObjects()]
+[assembly: KiboardsTestStartup("SimpleTest.Startup")]
 [assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
-[assembly: TestStartup("SimpleTest.Startup")]
 
 namespace SimpleTest
 {   
     public class Simple_Must
     {
         [Theory]
-        [InlineData(1, 2)]
+        [InlineData(0, 2)]
         public void Not_DivideByZero(int a, int b)
         {
             var c = 1 / b;
@@ -18,6 +19,8 @@ namespace SimpleTest
         public void Pass()
         {
             Assert.Equal(0, 0);
+
+            Thread.Sleep(6000);
         }
     }
 }
