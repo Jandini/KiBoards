@@ -52,7 +52,7 @@ namespace KiBoards
 
                     foreach (var ndjsonFile in ndjsonFiles.OrderBy(a => a))
                     {
-                        messageSink.WriteMessage($"Imporing {Path.GetFileName(ndjsonFile)}");
+                        messageSink.WriteMessage($"Importing {Path.GetFileName(ndjsonFile)}");
                         var results = await kibanaClient.ImportSavedObjectsAsync(ndjsonFile, attribute.Overwrite);
                         messageSink.WriteMessage($"Imported {results.SuccessCount} object(s)");
 
