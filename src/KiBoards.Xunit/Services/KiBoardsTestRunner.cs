@@ -12,69 +12,62 @@ namespace KiBoards.Services
         private readonly KiBoardsElasticClient _elasticService;
         private readonly KiBoardsTestRun _testRun;
 
-        public string Version {  get; private set; }
+        public string Version { get; private set; }
 
         public KiBoardsTestRunner(IMessageSink messageSink)
         {
-            try
+            Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+
+            _testRun = new KiBoardsTestRun()
             {
-                Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
+                Id = Guid.NewGuid().ToString(),
+                StartTime = DateTime.UtcNow,
+                MachineName = Environment.MachineName,
+                UserName = Environment.UserName,
+                FrameworkVersion = Version,
+                Variables = new Dictionary<string, string>()
+            };
 
-                _testRun = new KiBoardsTestRun()
-                {
-                    Id = Guid.NewGuid().ToString(),
-                    StartTime = DateTime.UtcNow,
-                    MachineName = Environment.MachineName,
-                    UserName = Environment.UserName,
-                    FrameworkVersion = Version,
-                    Variables = new Dictionary<string, string>()
-                };
+            var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<KiboardsTestStartupAttribute>() != null).ToArray();
 
-                var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<KiboardsTestStartupAttribute>() != null).ToArray();
+            foreach (var assembly in startupAssemblies)
+                Startup(assembly, messageSink);
 
-                foreach (var assembly in startupAssemblies)
-                    Startup(assembly, messageSink);
-
-                foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
-                {
-                    var name = entry.Key.ToString();
-                    var value = entry.Value.ToString();
-
-                    const string prefix = "KIB_VAR_";
-
-                    if (name.Length > prefix.Length + 1 && name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(value))
-                        _testRun.Variables.TryAdd(name[prefix.Length..], value);
-                }
-
-                var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
-                var connectionSettings = new ConnectionSettings(new Uri(uriString));
-                
-                var elasticClient = new ElasticClient(connectionSettings
-                    .DefaultMappingFor<KiBoardsTestRun>(m => m
-                        .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
-                        .IdProperty(p => p.Id))
-                    .DefaultMappingFor<KiBoardsTestCaseRun>(m => m
-                        .IndexName($"kiboards-testcases-{DateTime.UtcNow:yyyy-MM}"))
-
-                    .MaxRetryTimeout(TimeSpan.FromMinutes(5))
-                    .EnableApiVersioningHeader()
-                    .MaximumRetries(3));
-
-                _elasticService = new KiBoardsElasticClient(elasticClient, messageSink);
-                
-                messageSink.WriteMessage($"KiBoards.Xunit {Version} logging to {uriString}");
-            }
-            catch (Exception ex)
+            foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
             {
-                messageSink.WriteException(ex);
+                var name = entry.Key.ToString();
+                var value = entry.Value.ToString();
+
+                const string prefix = "KIB_VAR_";
+
+                if (name.Length > prefix.Length + 1 && name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(value))
+                    _testRun.Variables.TryAdd(name[prefix.Length..], value);
             }
+
+            var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
+            var connectionSettings = new ConnectionSettings(new Uri(uriString));
+
+            var elasticClient = new ElasticClient(connectionSettings
+                .DefaultMappingFor<KiBoardsTestRun>(m => m
+                    .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
+                    .IdProperty(p => p.Id))
+                .DefaultMappingFor<KiBoardsTestCaseRun>(m => m
+                    .IndexName($"kiboards-testcases-{DateTime.UtcNow:yyyy-MM}"))
+
+                .MaxRetryTimeout(TimeSpan.FromMinutes(5))
+                .EnableApiVersioningHeader()
+                .MaximumRetries(3));
+
+            _elasticService = new KiBoardsElasticClient(elasticClient, messageSink);
+
+            messageSink.WriteMessage($"KiBoards.Xunit {Version} logging to {uriString}");
         }
 
 
         private void Startup(Assembly assembly, IMessageSink messageSink)
         {
             try
-            {                               
+            {
                 var startup = assembly.GetCustomAttribute<KiboardsTestStartupAttribute>();
                 Type type = assembly.GetType(startup.ClassName);
 
@@ -128,7 +121,7 @@ namespace KiBoards.Services
                     StackTraces = failed.StackTraces,
                     ExceptionTypes = failed.ExceptionTypes,
                     Messages = failed.Messages,
-                } : null,                   
+                } : null,
                 TestCase = new KiBoardsTestCase()
                 {
                     DisplayName = testResult.TestCase.DisplayName,
@@ -141,8 +134,9 @@ namespace KiBoards.Services
                     Class = new KiBoardsTestCaseClass()
                     {
                         Name = testResult.TestClass.Class.Name,
-                        Assembly = new KiBoardsTestCaseAssembly() {
-                            Name = testResult.TestClass.Class.Assembly.Name,                            
+                        Assembly = new KiBoardsTestCaseAssembly()
+                        {
+                            Name = testResult.TestClass.Class.Assembly.Name,
                             AssemblyPath = testResult.TestClass.Class.Assembly.AssemblyPath
                         }
                     },
@@ -151,10 +145,10 @@ namespace KiBoards.Services
                         DisplayName = testResult.TestClass.TestCollection.DisplayName,
                         UniqueId = testResult.TestClass.TestCollection.UniqueID,
                     }
-                    },
+                },
                 Skipped = testResult is ITestSkipped skipped ? new KiBoardsTestCaseRunSkipped() { Reason = skipped.Reason } : null,
                 Status = testResult is ITestPassed ? "Passed" : testResult is ITestFailed ? "Failed" : testResult is ITestSkipped ? "Skipped" : "Other"
-            }); 
+            });
         }
 
         internal void UpdateRun(IEnumerable<IXunitTestCase> testCases)
