@@ -10,7 +10,10 @@ namespace KiBoards.Services
     internal class KiBoardsTestRunner
     {
         private readonly KiBoardsElasticClient _elasticService;
-        private readonly KiBoardsTestRun _testRun;
+        private readonly Func<KiBoardsTestRun> _testRunFactory;
+        private readonly string _runId = Guid.NewGuid().ToString();
+        private string _runName;
+        private string _runHash;
 
         public string Version { get; private set; }
 
@@ -18,20 +21,10 @@ namespace KiBoards.Services
         {
             Version = Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion;
 
-            _testRun = new KiBoardsTestRun()
-            {
-                Id = Guid.NewGuid().ToString(),
-                StartTime = DateTime.UtcNow,
-                MachineName = Environment.MachineName,
-                UserName = Environment.UserName,
-                FrameworkVersion = Version,
-                Variables = new Dictionary<string, string>()
-            };
-
-            var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<KiboardsTestStartupAttribute>() != null).ToArray();
-
-            foreach (var assembly in startupAssemblies)
-                Startup(assembly, messageSink);
+            var variables = new Dictionary<string, string>();
+            var startTime = DateTime.Now;
+            var userName = Environment.UserName;
+            var machineName = Environment.MachineName;
 
             foreach (DictionaryEntry entry in Environment.GetEnvironmentVariables())
             {
@@ -41,19 +34,32 @@ namespace KiBoards.Services
                 const string prefix = "KIB_VAR_";
 
                 if (name.Length > prefix.Length + 1 && name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(value))
-                    _testRun.Variables.TryAdd(name[prefix.Length..], value);
+                    variables.TryAdd(name[prefix.Length..], value);
             }
+
+            _testRunFactory = () => new KiBoardsTestRun()
+            {
+                RunId = _runId,
+                StartTime = startTime,
+                MachineName = machineName,
+                UserName = userName,
+                FrameworkVersion = Version,
+                Variables = variables,
+                Name = _runName,
+                Hash = _runHash,
+            };
+
+            var startupAssemblies = AppDomain.CurrentDomain.GetAssemblies().Where(a => a.GetCustomAttribute<KiboardsTestStartupAttribute>() != null).ToArray();
+
+            foreach (var assembly in startupAssemblies)
+                Startup(assembly, messageSink);
 
             var uriString = Environment.GetEnvironmentVariable("KIB_ELASTICSEARCH_HOST") ?? "http://localhost:9200";
             var connectionSettings = new ConnectionSettings(new Uri(uriString));
 
             var elasticClient = new ElasticClient(connectionSettings
                 .DefaultMappingFor<KiBoardsTestRun>(m => m
-                    .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}")
-                    .IdProperty(p => p.Id))
-                .DefaultMappingFor<KiBoardsTestCaseRun>(m => m
-                    .IndexName($"kiboards-testcases-{DateTime.UtcNow:yyyy-MM}"))
-
+                    .IndexName($"kiboards-testruns-{DateTime.UtcNow:yyyy-MM}"))
                 .MaxRetryTimeout(TimeSpan.FromMinutes(5))
                 .EnableApiVersioningHeader()
                 .MaximumRetries(3));
@@ -76,9 +82,9 @@ namespace KiBoards.Services
                     messageSink.WriteMessage($"Invoking {type.FullName}");
 
                     if (type.GetConstructor(new Type[] { typeof(string), typeof(IMessageSink) }) != null)
-                        Activator.CreateInstance(type, _testRun.Id, messageSink);
+                        Activator.CreateInstance(type, _runId, messageSink);
                     else if (type.GetConstructor(new Type[] { typeof(string) }) != null)
-                        Activator.CreateInstance(type, _testRun.Id);
+                        Activator.CreateInstance(type, _runId);
                     else if (type.GetConstructor(new Type[] { typeof(IMessageSink) }) != null)
                         Activator.CreateInstance(type, messageSink);
                     else if (type.GetConstructor(new Type[] { }) != null)
@@ -93,7 +99,9 @@ namespace KiBoards.Services
 
         public async Task IndexTestRunAsync(RunSummary summary)
         {
-            _testRun.Summary = new KiBoardsTestRunSummary()
+            var testRun = _testRunFactory();
+
+            testRun.Summary = new KiBoardsTestRunSummary()
             {
                 Total = summary.Total,
                 Failed = summary.Failed,
@@ -101,19 +109,21 @@ namespace KiBoards.Services
                 Time = summary.Time,
             };
 
-            _testRun.Status = summary.Failed > 0 ? "Failed" : summary.Skipped == summary.Total ? "Skipped" : "Passed";
+            testRun.Status = summary.Failed > 0 ? "Failed" : summary.Skipped == summary.Total ? "Skipped" : "Passed";
 
-            await _elasticService.IndexDocumentAsync(_testRun);
+          
+            await _elasticService.IndexDocumentAsync(testRun);
         }
 
         public async Task IndexTestCaseRunAsync(DateTime startedAt, ITestResultMessage testResult)
         {
-            await _elasticService.IndexDocumentAsync(new KiBoardsTestCaseRun()
+            var testRun = _testRunFactory();
+
+            testRun.Test = new KiBoardsTestCaseRun()
             {
-                Id = (_testRun.Id + testResult.TestCase.UniqueID).ComputeMD5(),
+                Id = (testRun.RunId + testResult.TestCase.UniqueID).ComputeMD5(),
                 StartedAt = startedAt,
                 FinishedAt = DateTime.UtcNow,
-                TestRun = _testRun,
                 ExecutionTime = testResult.ExecutionTime,
                 Output = testResult.Output,
                 Failed = testResult is ITestFailed failed ? new KiBoardsTestCaseRunFailed()
@@ -148,13 +158,15 @@ namespace KiBoards.Services
                 },
                 Skipped = testResult is ITestSkipped skipped ? new KiBoardsTestCaseRunSkipped() { Reason = skipped.Reason } : null,
                 Status = testResult is ITestPassed ? "Passed" : testResult is ITestFailed ? "Failed" : testResult is ITestSkipped ? "Skipped" : "Other"
-            });
+            };
+
+            await _elasticService.IndexDocumentAsync(testRun);
         }
 
         internal void UpdateRun(IEnumerable<IXunitTestCase> testCases)
         {
-            _testRun.Name = string.Join(",", testCases.Select(a => Path.GetFileNameWithoutExtension(a.TestMethod.TestClass.Class.Assembly.AssemblyPath)).Distinct());
-            _testRun.Hash = string.Join(",", testCases.OrderBy(a => a.UniqueID).Select(a => a.UniqueID)).ComputeMD5();
+            _runName = string.Join(",", testCases.Select(a => Path.GetFileNameWithoutExtension(a.TestMethod.TestClass.Class.Assembly.AssemblyPath)).Distinct());
+            _runHash = string.Join(",", testCases.OrderBy(a => a.UniqueID).Select(a => a.UniqueID)).ComputeMD5();
         }
     }
 }
