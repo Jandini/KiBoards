@@ -5,7 +5,6 @@
         public string Id { get; set; }
         public DateTime StartedAt { get; set; }
         public DateTime FinishedAt { get; set; }
-        public KiBoardsTestRun TestRun { get; set; }
         public KiBoardsTestCase TestCase { get; set; }
         public KiBoardsTestCaseRunSkipped Skipped { get; set; }
         public KiBoardsTestCaseRunFailed Failed { get; set; }
