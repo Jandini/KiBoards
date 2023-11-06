@@ -28,6 +28,13 @@
 	</PropertyGroup>
 
 	<ItemGroup>
+		<Content Include="Dashboards/**/*.*">
+			<Pack>true</Pack>
+			<PackagePath>contentFiles\any\any;content</PackagePath>
+		</Content>
+	</ItemGroup>
+	
+	<ItemGroup>
 		<None Include="..\..\icon.png" Pack="true" PackagePath="" />
 		<None Include="..\..\LICENSE" Pack="true" PackagePath="" />
 		<None Include="..\..\README.md" Pack="true" PackagePath="\" />
@@ -45,6 +52,12 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\KiBoards.Xunit\KiBoards.Xunit.csproj" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <None Update="KiBoards.ndjson">
+	    <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+	  </None>
 	</ItemGroup>
 	
 </Project>
