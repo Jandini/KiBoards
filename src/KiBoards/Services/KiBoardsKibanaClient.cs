@@ -1,7 +1,9 @@
 ﻿using System.Net.Http.Json;
 using System.Text.Json;
+using System.Threading;
 using KiBoards.Models.Objects;
 using KiBoards.Models.Settings;
+using KiBoards.Models.Spaces;
 using KiBoards.Models.Status;
 
 namespace KiBoards.Services
@@ -43,5 +45,15 @@ namespace KiBoards.Services
 
         public async Task<KibanaStatusResponse> GetStatus() => await GetStatus(CancellationToken.None);
         public async Task<KibanaStatusResponse> GetStatus(CancellationToken cancellationToken) => await _httpClient.GetFromJsonAsync<KibanaStatusResponse>("api/status", cancellationToken);
+
+
+        public async Task<bool> TryCreateSpaceAsync(Space space) => await TryCreateSpaceAsync(space, CancellationToken.None);   
+        public async Task<bool> TryCreateSpaceAsync(Space space, CancellationToken cancellationToken)
+        {
+            var response = await _httpClient.PostAsJsonAsync("api/spaces/space", space, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }, cancellationToken );
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<Space> GetSpaceAsync(string id) => await _httpClient.GetFromJsonAsync<Space>($"api/spaces/space/{id}", new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
 }

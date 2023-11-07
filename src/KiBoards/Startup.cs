@@ -1,4 +1,5 @@
-﻿using KiBoards.Services;
+﻿using KiBoards.Models.Spaces;
+using KiBoards.Services;
 using System.Reflection;
 using Xunit.Abstractions;
 
@@ -17,7 +18,7 @@ namespace KiBoards
             {
                 var attribute = assembly.GetCustomAttribute<KiBoardsSavedObjectsAttribute>();
 
-                var task = Task.Factory.StartNew(async () =>
+                var task = Task.Run(async () =>
                 {
                     var httpClient = new HttpClient();
                     var kibanaUri = new Uri(Environment.GetEnvironmentVariable("KIB_KIBANA_HOST") ?? "http://localhost:5601");
@@ -44,6 +45,13 @@ namespace KiBoards
                             messageSink.WriteMessage(ex.Message);
                             await Task.Delay(5000);
                         }
+                    }
+
+                    var result = await kibanaClient.TryCreateSpaceAsync(Space.KiBoards);
+
+                    if (result)
+                    {
+                        messageSink.WriteMessage($"KiBoards space created successfully.");
                     }
 
                     var ndjsonFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), attribute.SearchPattern);
