@@ -27,14 +27,15 @@ namespace KiBoards.Services
         }
 
 
-        public async Task<ImportObjectsResponse> ImportSavedObjectsAsync(string ndjsonFile) => await ImportSavedObjectsAsync(ndjsonFile, false, CancellationToken.None);
-        public async Task<ImportObjectsResponse> ImportSavedObjectsAsync(string ndjsonFile, bool overwrite) => await ImportSavedObjectsAsync(ndjsonFile, overwrite, CancellationToken.None);
-        public async Task<ImportObjectsResponse> ImportSavedObjectsAsync(string ndjsonFile, bool overwrite, CancellationToken cancellationToken)
+        public async Task<ImportObjectsResponse> ImportSavedObjectsAsync(string ndjsonFile, string spaceId) => await ImportSavedObjectsAsync(ndjsonFile, spaceId, false, CancellationToken.None);
+        public async Task<ImportObjectsResponse> ImportSavedObjectsAsync(string ndjsonFile, string spaceId, bool overwrite) => await ImportSavedObjectsAsync(ndjsonFile, spaceId, overwrite, CancellationToken.None);
+        public async Task<ImportObjectsResponse> ImportSavedObjectsAsync(string ndjsonFile, string spaceId, bool overwrite, CancellationToken cancellationToken)
         {
             var multipartContent = new MultipartFormDataContent();
             var streamContent = new StreamContent(File.Open(ndjsonFile, FileMode.Open));
             multipartContent.Add(streamContent, "file", ndjsonFile);
-            var response = await _httpClient.PostAsync($"/api/saved_objects/_import?overwrite={overwrite.ToString().ToLower()}", multipartContent);
+
+            var response = await _httpClient.PostAsync($"{(spaceId != null ? $"/s/{spaceId.ToLower()}" : "")}/api/saved_objects/_import?overwrite={overwrite.ToString().ToLower()}", multipartContent);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ImportObjectsResponse>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }, cancellationToken);

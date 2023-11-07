@@ -60,8 +60,13 @@ namespace KiBoards
 
                     foreach (var ndjsonFile in ndjsonFiles.OrderBy(a => a))
                     {
-                        messageSink.WriteMessage($"Importing {Path.GetFileName(ndjsonFile)}");
-                        var results = await kibanaClient.ImportSavedObjectsAsync(ndjsonFile, attribute.Overwrite);
+                        string fileName = Path.GetFileName(ndjsonFile);
+
+                        messageSink.WriteMessage($"Importing {fileName}");
+
+                        var spaceId = fileName == "KiBoards.ndjson" ? "kiboards" : null;
+
+                        var results = await kibanaClient.ImportSavedObjectsAsync(ndjsonFile, spaceId, attribute.Overwrite);
                         messageSink.WriteMessage($"Imported {results.SuccessCount} object(s)");
 
                         if (!results.Success && results.SuccessCount > 0)
