@@ -27,11 +27,9 @@
 		<PackageProjectUrl>https://github.com/Jandini/KiBoards</PackageProjectUrl>
 	</PropertyGroup>
 
-	<ItemGroup>
-		<Content Include="Dashboards/**/*.*">
-			<Pack>true</Pack>
-			<PackagePath>contentFiles\any\any;content</PackagePath>
-		</Content>
+	<ItemGroup>	
+		<Content Include="Dashboards/**/*.*" Pack="true" PackagePath="contentFiles" PackageCopyToOutput="true" />
+		<Content Include="KiBoards.targets" PackagePath="build/KiBoards.targets" />
 	</ItemGroup>
 	
 	<ItemGroup>
