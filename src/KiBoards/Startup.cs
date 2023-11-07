@@ -1,4 +1,5 @@
-﻿using KiBoards.Services;
+﻿using KiBoards.Models.Spaces;
+using KiBoards.Services;
 using System.Reflection;
 using Xunit.Abstractions;
 
@@ -17,7 +18,7 @@ namespace KiBoards
             {
                 var attribute = assembly.GetCustomAttribute<KiBoardsSavedObjectsAttribute>();
 
-                var task = Task.Factory.StartNew(async () =>
+                var task = Task.Run(async () =>
                 {
                     var httpClient = new HttpClient();
                     var kibanaUri = new Uri(Environment.GetEnvironmentVariable("KIB_KIBANA_HOST") ?? "http://localhost:5601");
@@ -46,21 +47,34 @@ namespace KiBoards
                         }
                     }
 
+                    var result = await kibanaClient.TryCreateSpaceAsync(Space.KiBoards);
+
+                    if (result)
+                        messageSink.WriteMessage($"KiBoards space created successfully.");
+
+                    await kibanaClient.TrySetDefaultRoute("/app/dashboards", Space.KiBoards.Id, CancellationToken.None);
+
+
                     var ndjsonFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), attribute.SearchPattern);
 
                     messageSink.WriteMessage($"Found {ndjsonFiles.Length} ndjson file(s)");
 
                     foreach (var ndjsonFile in ndjsonFiles.OrderBy(a => a))
                     {
-                        messageSink.WriteMessage($"Importing {Path.GetFileName(ndjsonFile)}");
-                        var results = await kibanaClient.ImportSavedObjectsAsync(ndjsonFile, attribute.Overwrite);
+                        string fileName = Path.GetFileName(ndjsonFile);
+
+                        messageSink.WriteMessage($"Importing {fileName}");
+
+                        var spaceId = fileName == "KiBoards.ndjson" ? "kiboards" : null;
+
+                        var results = await kibanaClient.ImportSavedObjectsAsync(ndjsonFile, spaceId, attribute.Overwrite);
                         messageSink.WriteMessage($"Imported {results.SuccessCount} object(s)");
 
                         if (!results.Success && results.SuccessCount > 0)
                             messageSink.WriteMessage("Warning: Some objects were not imported. Please ensure proper import order based on their dependencies.");
                     }
                 });
-            }
+            }            
         }
     }
 }
