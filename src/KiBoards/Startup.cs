@@ -50,9 +50,10 @@ namespace KiBoards
                     var result = await kibanaClient.TryCreateSpaceAsync(Space.KiBoards);
 
                     if (result)
-                    {
                         messageSink.WriteMessage($"KiBoards space created successfully.");
-                    }
+
+                    await kibanaClient.TrySetDefaultRoute("/app/dashboards", Space.KiBoards.Id, CancellationToken.None);
+
 
                     var ndjsonFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), attribute.SearchPattern);
 
@@ -73,7 +74,7 @@ namespace KiBoards
                             messageSink.WriteMessage("Warning: Some objects were not imported. Please ensure proper import order based on their dependencies.");
                     }
                 });
-            }
+            }            
         }
     }
 }

@@ -19,11 +19,21 @@ namespace KiBoards.Services
             _httpClient.DefaultRequestHeaders.Add("kbn-xsrf", "true");
         }
 
-        public async Task SetDarkModeAsync(bool darkMode, CancellationToken cancellationToken)
+        private string GetSpaceBaseUrl(string spaceId) => !string.IsNullOrEmpty(spaceId) ? $"/s/{spaceId.ToLower()}" : string.Empty;
+
+        public async Task SetDarkModeAsync(bool darkMode, string spaceId, CancellationToken cancellationToken)
         {
             var content = JsonContent.Create(new KibanaSettingsRequest() { Changes = new KibanaSettingsChanges() { ThemeDarkMode = darkMode } });
-            var response = await _httpClient.PostAsync("api/kibana/settings", content);
+            var response = await _httpClient.PostAsync($"{GetSpaceBaseUrl(spaceId)}/api/kibana/settings", content);
             response.EnsureSuccessStatusCode();
+        }
+
+
+        public async Task<bool> TrySetDefaultRoute(string defaultRoute, string spaceId, CancellationToken cancellationToken)
+        {
+            var content = JsonContent.Create(new KibanaSettingsRequest() { Changes = new KibanaSettingsChanges() { DefaultRoute = defaultRoute } });
+            var response = await _httpClient.PostAsync($"{GetSpaceBaseUrl(spaceId)}/api/kibana/settings", content);
+            return response.IsSuccessStatusCode;
         }
 
 
@@ -35,7 +45,7 @@ namespace KiBoards.Services
             var streamContent = new StreamContent(File.Open(ndjsonFile, FileMode.Open));
             multipartContent.Add(streamContent, "file", ndjsonFile);
 
-            var response = await _httpClient.PostAsync($"{(spaceId != null ? $"/s/{spaceId.ToLower()}" : "")}/api/saved_objects/_import?overwrite={overwrite.ToString().ToLower()}", multipartContent);
+            var response = await _httpClient.PostAsync($"{GetSpaceBaseUrl(spaceId)}/api/saved_objects/_import?overwrite={overwrite.ToString().ToLower()}", multipartContent);
 
             response.EnsureSuccessStatusCode();
             var result = await response.Content.ReadFromJsonAsync<ImportObjectsResponse>(new JsonSerializerOptions() { PropertyNameCaseInsensitive = true }, cancellationToken);
