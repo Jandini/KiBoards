@@ -36,7 +36,11 @@ In just a few simple steps, you can have your unit test results stored in Elasti
 
 Now, after your unit tests are executed, the results are saved to the Elasticsearch host defined by the `KIB_ELASTICSEARCH_HOST` variable, with a default value of [http://localhost:9200](http://localhost:9200/).
 
+You can specify `KIB_KIBANA_HOST` to automatically build Kibana dashboards like in the example below [http://10.120.235.20:5601]: 
 
+![kiboards](https://github.com/user-attachments/assets/9a908bc0-a700-49dc-8f4a-d2257eff1fe6)
+
+The dashboards are created in separate Kibana's space called KiBoards. 
 
 ---
 Created from [JandaBox](https://github.com/Jandini/JandaBox)
