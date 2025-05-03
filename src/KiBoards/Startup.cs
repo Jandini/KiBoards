@@ -8,7 +8,7 @@ using Xunit.Abstractions;
 namespace KiBoards
 {
     public class Startup
-    {    
+    {
 
         public Startup(IMessageSink messageSink)
         {
@@ -54,6 +54,15 @@ namespace KiBoards
 
                     await kibanaClient.TrySetDefaultRoute("/app/dashboards", Space.KiBoards.Id, CancellationToken.None);
 
+                    var darkModeVariable = Environment.GetEnvironmentVariable("KIB_DARK_MODE");
+
+                    if (!string.IsNullOrEmpty(darkModeVariable))
+                    {
+                        var darkMode = darkModeVariable == "1" || darkModeVariable.ToLower() == "true";
+                        messageSink.WriteMessage($"{(darkMode ? "Enabling" : "Disabling")} Kibana dark mode.");
+
+                        await kibanaClient.SetDarkModeAsync(darkMode, Space.KiBoards.Id, CancellationToken.None);
+                    }
 
                     var ndjsonFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), attribute.SearchPattern);
 
@@ -74,7 +83,7 @@ namespace KiBoards
                             messageSink.WriteMessage("Warning: Some objects were not imported. Please ensure proper import order based on their dependencies.");
                     }
                 });
-            }            
+            }
         }
     }
 }
