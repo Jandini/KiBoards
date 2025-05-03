@@ -2,6 +2,7 @@
 using Nest;
 using System.Collections;
 using System.Reflection;
+using System.Text;
 using Xunit.Abstractions;
 using Xunit.Sdk;
 
@@ -30,11 +31,27 @@ namespace KiBoards.Services
             {
                 var name = entry.Key.ToString();
                 var value = entry.Value.ToString();
-
+               
                 const string prefix = "KIB_VAR_";
 
                 if (name.Length > prefix.Length + 1 && name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(value))
                     variables.TryAdd(name[prefix.Length..], value);
+
+                const string base64 = "KIB_B64_";
+
+                if (name.Length > base64.Length + 1 && name.StartsWith(base64, StringComparison.OrdinalIgnoreCase) && !string.IsNullOrEmpty(value))
+                {
+                    try
+                    {
+                        value = Encoding.UTF8.GetString(Convert.FromBase64String(value));
+                    }
+                    catch (Exception ex) 
+                    {
+                        messageSink.WriteException(ex);
+                    }
+
+                    variables.TryAdd(name[base64.Length..], value);
+                }
             }
 
             _testRunFactory = () => new KiBoardsTestRun()
