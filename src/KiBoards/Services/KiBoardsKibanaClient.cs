@@ -58,13 +58,9 @@ namespace KiBoards.Services
         public async Task<KibanaStatusResponse> GetStatus(CancellationToken cancellationToken) => await _httpClient.GetFromJsonAsync<KibanaStatusResponse>("api/status", cancellationToken);
 
 
-        public async Task<bool> TryCreateSpaceAsync(Space space) => await TryCreateSpaceAsync(space, CancellationToken.None);   
-        public async Task<bool> TryCreateSpaceAsync(Space space, CancellationToken cancellationToken)
-        {
-            var response = await _httpClient.PostAsJsonAsync("api/spaces/space", space, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }, cancellationToken );
-            return response.IsSuccessStatusCode;
-        }
-
+        public async Task<HttpResponseMessage> TryCreateSpaceAsync(Space space, CancellationToken cancellationToken = default)
+            => await _httpClient.PostAsJsonAsync("api/spaces/space", space, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }, cancellationToken);
+        
         public async Task<Space> GetSpaceAsync(string id) => await _httpClient.GetFromJsonAsync<Space>($"api/spaces/space/{id}", new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
 }
