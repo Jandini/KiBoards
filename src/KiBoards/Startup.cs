@@ -49,10 +49,12 @@ namespace KiBoards
 
                     var result = await kibanaClient.TryCreateSpaceAsync(Space.KiBoards);
 
-                    if (result)
+                    if (result.IsSuccessStatusCode)
                         messageSink.WriteMessage($"KiBoards space created successfully.");
+                    else
+                        messageSink.WriteMessage($"KiBoards space failed to create due to {result.ReasonPhrase}");
 
-                    await kibanaClient.TrySetDefaultRoute("/app/dashboards", Space.KiBoards.Id, CancellationToken.None);
+                        await kibanaClient.TrySetDefaultRoute("/app/dashboards", Space.KiBoards.Id, CancellationToken.None);
 
                     var darkModeVariable = Environment.GetEnvironmentVariable("KIB_DARK_MODE");
 
