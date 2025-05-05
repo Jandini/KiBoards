@@ -1,6 +1,6 @@
-﻿namespace KiBoards.Models.Spaces
+﻿namespace KiBoards.Management.Models.Spaces
 {
-    class Space
+    class KibanaSpace
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -10,7 +10,7 @@
         public string ImageUrl { get; set; }
         public string Description { get; set; }
 
-        public static Space KiBoards = new()
+        public static KibanaSpace KiBoards = new()
         {
             Id = "kiboards",
             Name = "KiBoards",
@@ -22,9 +22,9 @@
             Description = "KiBoards dashboards"
         };
 
-        public static Space Create(string id, string name, string initials, string color, string disabledFeatures, string imageUrl, string description)
+        public static KibanaSpace Create(string id, string name, string initials, string color, string disabledFeatures, string imageUrl, string description)
         {
-            return new Space
+            return new KibanaSpace
             {
                 Id = id,
                 Name = name,
