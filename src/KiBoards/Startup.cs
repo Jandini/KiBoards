@@ -46,6 +46,7 @@ namespace KiBoards
                             await Task.Delay(5000);
                         }
                     }
+                    messageSink.WriteMessage($"Trying to create Kibana space for KiBoards...");
 
                     var result = await kibanaClient.TryCreateSpaceAsync(Space.KiBoards);
 
@@ -54,7 +55,21 @@ namespace KiBoards
                     else
                         messageSink.WriteMessage($"KiBoards space failed to create due to {result.ReasonPhrase}");
 
-                        await kibanaClient.TrySetDefaultRoute("/app/dashboards", Space.KiBoards.Id, CancellationToken.None);
+
+                    var defaultRouteVariable = Environment.GetEnvironmentVariable("KIB_DEFAULT_ROUTE");
+
+                    var defaultRoute = (!string.IsNullOrEmpty(defaultRouteVariable))
+                        ? defaultRouteVariable
+                        : "/app/dashboards";
+
+                    messageSink.WriteMessage($"Configuring default route to {defaultRoute}");
+
+                    result = await kibanaClient.SetDefaultRoute(defaultRoute, Space.KiBoards.Id, CancellationToken.None);
+
+                    if (result.IsSuccessStatusCode)
+                        messageSink.WriteMessage($"KiBoards default route ({defaultRoute}) configured successfully.");
+                    else
+                        messageSink.WriteMessage($"KiBoards default route ({defaultRoute}) configuration failed due to {result.ReasonPhrase}.");
 
                     var darkModeVariable = Environment.GetEnvironmentVariable("KIB_DARK_MODE");
 
