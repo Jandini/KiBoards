@@ -29,11 +29,10 @@ namespace KiBoards.Services
         }
 
 
-        public async Task<bool> TrySetDefaultRoute(string defaultRoute, string spaceId, CancellationToken cancellationToken)
+        public async Task<HttpResponseMessage> SetDefaultRoute(string defaultRoute, string spaceId, CancellationToken cancellationToken)
         {
             var content = JsonContent.Create(new KibanaSettingsRequest() { Changes = new KibanaSettingsChanges() { DefaultRoute = defaultRoute } });
-            var response = await _httpClient.PostAsync($"{GetSpaceBaseUrl(spaceId)}/api/kibana/settings", content);
-            return response.IsSuccessStatusCode;
+            return await _httpClient.PostAsync($"{GetSpaceBaseUrl(spaceId)}/api/kibana/settings", content);            
         }
 
 
