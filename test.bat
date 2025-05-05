@@ -12,8 +12,8 @@ set KIB_SPACE_DISABLED_FEATURES=
 set KIB_DEFAULT_ROUTE=/app/dashboards#/view/3fd54b90-7a8b-11ee-84d9-b3a2378dedfb
 dotnet build -c:Release src\KiBoards.sln
 dotnet test bin\Release\net8.0\TestStartup.dll --logger "console;verbosity=normal"
-dotnet test bin\Release\net8.0\TestObject.dll --logger "console;verbosity=normal"
-dotnet test bin\Release\net8.0\Framework.dll --logger "console;verbosity=normal"
+dotnet test bin\Release\net8.0\TestFramework.dll --logger "console;verbosity=normal"
+dotnet test bin\Release\net8.0\TestObjects.dll --logger "console;verbosity=normal"
 
 
 

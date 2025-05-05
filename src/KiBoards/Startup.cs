@@ -60,7 +60,8 @@ namespace KiBoards
                         name: GetEnvironmentVariable("KIB_SPACE_NAME", "KiBoards"),
                         initials: GetEnvironmentVariable("KIB_SPACE_INITIALS", "Ki"),
                         color: GetEnvironmentVariable("KIB_SPACE_COLOR", "#000000"),
-                        disabledFeatures: GetEnvironmentVariable("KIB_DISABLE_FEATURES", "discover,enterpriseSearch,logs,infrastructure,apm,uptime,observabilityCases,slo,siem,securitySolutionCases,canvas,maps,ml,visualize,dev_tools,advancedSettings,indexPatterns,filesManagement,filesSharedImage,savedObjectsManagement,savedObjectsTagging,osquery,actions,generalCases,guidedOnboardingFeature,rulesSettings,maintenanceWindow,stackAlerts,fleetv2,fleet,monitoring", true),
+                        // enterpriseSearch, observabilityCases, discover,,logs,infrastructure,apm,uptime,slo,siem,securitySolutionCases,canvas,maps,ml,visualize,dev_tools,advancedSettings,indexPatterns,filesManagement,filesSharedImage,savedObjectsManagement,savedObjectsTagging,osquery,actions,generalCases,guidedOnboardingFeature,rulesSettings,maintenanceWindow,stackAlerts,fleetv2,fleet,monitoring
+                        disabledFeatures: Environment.GetEnvironmentVariable("KIB_DISABLE_FEATURES"),
                         imageUrl: "",
                         description: GetEnvironmentVariable("KIB_SPACE_DESCRIPTION", "KiBoards dashboards")
                     );
