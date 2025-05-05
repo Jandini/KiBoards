@@ -1,4 +1,4 @@
-﻿namespace KiBoards.Models.Status
+﻿namespace KiBoards.Management.Models.Status
 {
     class KibanaStatusResponse
     {
