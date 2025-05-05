@@ -21,5 +21,19 @@
             ImageUrl = "",
             Description = "KiBoards dashboards"
         };
+
+        public static Space Create(string id, string name, string initials, string color, string disabledFeatures, string imageUrl, string description)
+        {
+            return new Space
+            {
+                Id = id,
+                Name = name,
+                Initials = initials,
+                Color = color,
+                DisabledFeatures = disabledFeatures?.Split(',').Select(f => f.Trim()).ToList() ?? new List<string>(),
+                ImageUrl = imageUrl,
+                Description = description
+            };
+        }
     }
 }
