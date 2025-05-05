@@ -46,6 +46,7 @@ namespace KiBoards
                             await Task.Delay(5000);
                         }
                     }
+                    messageSink.WriteMessage($"Trying to create Kibana space for KiBoards...");
 
                     var result = await kibanaClient.TryCreateSpaceAsync(Space.KiBoards);
 
@@ -60,6 +61,8 @@ namespace KiBoards
                     var defaultRoute = (!string.IsNullOrEmpty(defaultRouteVariable))
                         ? defaultRouteVariable
                         : "/app/dashboards";
+
+                    messageSink.WriteMessage($"Configuring default route to {defaultRoute}");
 
                     result = await kibanaClient.SetDefaultRoute(defaultRoute, Space.KiBoards.Id, CancellationToken.None);
 
