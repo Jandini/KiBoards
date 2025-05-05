@@ -1,5 +1,6 @@
 ﻿using KiBoards.Models.Spaces;
 using KiBoards.Services;
+using System.Net;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using Xunit.Abstractions;
@@ -50,34 +51,45 @@ namespace KiBoards
                     }
                     messageSink.WriteMessage($"Trying to create Kibana space for KiBoards...");
 
-                    var result = await kibanaClient.TryCreateSpaceAsync(Space.KiBoards);
+                    var kiboards = Space.Create(
+                        id: "kiboards",
+                        name: GetEnvironmentVariable("KIB_SPACE_NAME", "KiBoards"),
+                        initials: GetEnvironmentVariable("KIB_SPACE_INITIALS", "Ki"),
+                        color: GetEnvironmentVariable("KIB_SPACE_COLOR", "#000000"),
+                        disabledFeatures: "discover,enterpriseSearch,logs,infrastructure,apm,uptime,observabilityCases,slo,siem,securitySolutionCases,canvas,maps,ml,visualize,dev_tools,advancedSettings,indexPatterns,filesManagement,filesSharedImage,savedObjectsManagement,savedObjectsTagging,osquery,actions,generalCases,guidedOnboardingFeature,rulesSettings,maintenanceWindow,stackAlerts,fleetv2,fleet,monitoring",
+                        imageUrl: "",
+                        description: GetEnvironmentVariable("KIB_SPACE_DESCRIPTION", "KiBoards dashboards")
+                    );
+
+                    var result = await kibanaClient.TryCreateSpaceAsync(kiboards);
+
+                    if (result.StatusCode == HttpStatusCode.Conflict)
+                    {
+                        messageSink.WriteMessage($"KiBoards space already exist. Updating the space...");
+                        result = await kibanaClient.UpdateSpaceAsync(kiboards);
+                    }
 
                     if (result.IsSuccessStatusCode)
-                        messageSink.WriteMessage($"KiBoards space created successfully.");
+                        messageSink.WriteMessage($"KiBoards space configured successfully.");
                     else
-                        messageSink.WriteMessage($"KiBoards space failed to create due to {result.ReasonPhrase}");
+                        messageSink.WriteMessage($"KiBoards space failed to configure due to {result.ReasonPhrase}");
 
 
 
-                    if (GetEnvironmentVariable("KIB_DEFAULT_ROUTE", out var defaultRoute, "/app/dashboards"))
-                    {
-                        messageSink.WriteMessage($"Configuring default route to {defaultRoute}");
+                    var defaultRoute = GetEnvironmentVariable("KIB_DEFAULT_ROUTE", "/app/dashboards");
+                    messageSink.WriteMessage($"Configuring default route to {defaultRoute}");
+                    result = await kibanaClient.SetDefaultRoute(defaultRoute, Space.KiBoards.Id, CancellationToken.None);
 
-                        result = await kibanaClient.SetDefaultRoute(defaultRoute, Space.KiBoards.Id, CancellationToken.None);
-
-                        if (result.IsSuccessStatusCode)
-                            messageSink.WriteMessage($"KiBoards default route ({defaultRoute}) configured successfully.");
-                        else
-                            messageSink.WriteMessage($"KiBoards default route ({defaultRoute}) configuration failed due to {result.ReasonPhrase}.");
-                    }
+                    if (result.IsSuccessStatusCode)
+                        messageSink.WriteMessage($"KiBoards default route ({defaultRoute}) configured successfully.");
+                    else
+                        messageSink.WriteMessage($"KiBoards default route ({defaultRoute}) configuration failed due to {result.ReasonPhrase}.");
 
 
-                    if (GetEnvironmentVariable("KIB_DARK_MODE", out var darkModeVariable, "0"))
-                    {
-                        var darkMode = darkModeVariable == "1" || darkModeVariable.ToLower() == "true";
-                        messageSink.WriteMessage($"{(darkMode ? "Enabling" : "Disabling")} Kibana dark mode.");
-                        await kibanaClient.SetDarkModeAsync(darkMode, Space.KiBoards.Id, CancellationToken.None);
-                    }
+                    var darkModeVariable = GetEnvironmentVariable("KIB_DARK_MODE", "0");
+                    var darkMode = darkModeVariable == "1" || darkModeVariable.ToLower() == "true";
+                    messageSink.WriteMessage($"{(darkMode ? "Enabling" : "Disabling")} Kibana dark mode.");
+                    await kibanaClient.SetDarkModeAsync(darkMode, Space.KiBoards.Id, CancellationToken.None);
 
                     var ndjsonFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), attribute.SearchPattern);
 
@@ -98,21 +110,15 @@ namespace KiBoards
                             messageSink.WriteMessage("Warning: Some objects were not imported. Please ensure proper import order based on their dependencies.");
                     }
                 });
-            }          
+            }
         }
 
-        private bool GetEnvironmentVariable(string name, out string value, string defaultValue = null)
+        private string GetEnvironmentVariable(string name, string defaultValue = null)
         {
-            value = Environment.GetEnvironmentVariable(name);
+            var value = Environment.GetEnvironmentVariable(name);
             bool result = !string.IsNullOrEmpty(value);
 
-            if (!result && defaultValue != null)
-            {
-                value = defaultValue;
-                result = true;
-            }
-
-            return result;
+            return result ? value : defaultValue;
         }
     }
 }

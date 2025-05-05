@@ -59,7 +59,11 @@ namespace KiBoards.Services
 
         public async Task<HttpResponseMessage> TryCreateSpaceAsync(Space space, CancellationToken cancellationToken = default)
             => await _httpClient.PostAsJsonAsync("api/spaces/space", space, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }, cancellationToken);
-        
+
+        public async Task<HttpResponseMessage> UpdateSpaceAsync(Space space, CancellationToken cancellationToken = default)
+            => await _httpClient.PutAsJsonAsync($"api/spaces/space/{space.Id}", space, new JsonSerializerOptions() { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }, cancellationToken);
+
+
         public async Task<Space> GetSpaceAsync(string id) => await _httpClient.GetFromJsonAsync<Space>($"api/spaces/space/{id}", new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
     }
 }
