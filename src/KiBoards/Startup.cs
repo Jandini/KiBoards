@@ -37,6 +37,7 @@ namespace KiBoards
                     {
                         try
                         {
+                            messageSink.WriteMessage("Checking Kibana status");
                             var response = await kibanaClient.GetStatus(CancellationToken.None);
 
                             string level = response?.Status?.Overall?.Level ?? throw new Exception("Kibana status is not available.");
@@ -49,7 +50,7 @@ namespace KiBoards
                         }
                         catch (Exception ex)
                         {
-                            messageSink.WriteMessage(ex.Message);
+                            messageSink.WriteException("KiBoards Startup: Checking Kibana status failed.", ex);
                             await Task.Delay(5000);
                         }
                     }
