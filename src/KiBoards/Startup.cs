@@ -50,7 +50,7 @@ namespace KiBoards
                         }
                         catch (Exception ex)
                         {
-                            messageSink.WriteException("KiBoards Startup: Checking Kibana status failed.", ex);
+                            messageSink.WriteException("Checking Kibana status failed.", ex);
                             await Task.Delay(5000);
                         }
                     }
