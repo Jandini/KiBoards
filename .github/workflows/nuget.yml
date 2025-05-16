@@ -2,7 +2,7 @@ name: NuGet
 
 on:
   push:
-     tags: '*'
+     tags: [ '*' ]
 
 env:
     DOTNET_CLI_TELEMETRY_OPTOUT: true
