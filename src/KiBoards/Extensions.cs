@@ -5,7 +5,7 @@ namespace KiBoards
 {
     internal static class Extensions
     {     
-        public static void WriteMessage(this IMessageSink messageSink, string message) => messageSink.OnMessage(new DiagnosticMessage(message));
-        public static void WriteException(this IMessageSink messageSink, Exception exception) => messageSink.OnMessage(new DiagnosticMessage("{0}\n{1}", exception.Message, exception.StackTrace));
+        public static void WriteMessage(this IMessageSink messageSink, string message, string method = "Startup") => messageSink.OnMessage(new DiagnosticMessage($"{method}: {message}"));
+        public static void WriteException(this IMessageSink messageSink, string message, Exception exception, string method = "Startup") => messageSink.OnMessage(new DiagnosticMessage($"{message} {exception.Message}{(exception.InnerException != null ? "\n" + exception.InnerException.Message : "")}"));
     }
 }
