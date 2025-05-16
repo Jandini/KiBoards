@@ -10,9 +10,12 @@ namespace KiBoards.Services
 {
     internal class KiBoardsTestRunner
     {
+        private const string KIB_RUN_ID = "KIB_RUN_ID";
         private readonly KiBoardsElasticClient _elasticService;
         private readonly Func<KiBoardsTestRun> _testRunFactory;
-        private readonly string _runId = Guid.NewGuid().ToString();
+        private readonly string _runId = !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable(KIB_RUN_ID))
+            ? Environment.GetEnvironmentVariable(KIB_RUN_ID)  
+            : Guid.NewGuid().ToString();
         private string _runName;
         private string _runHash;
 
