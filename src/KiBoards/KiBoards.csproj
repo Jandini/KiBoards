@@ -49,6 +49,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\KiBoards.Management\KiBoards.Management.csproj" />
 	  <ProjectReference Include="..\KiBoards.Xunit\KiBoards.Xunit.csproj" />
 	</ItemGroup>
 

@@ -45,7 +45,7 @@ namespace KiBoards
                             try
                             {
                                 messageSink.WriteMessage("Checking Kibana status");
-                                var response = await kibanaClient.GetStatus(CancellationToken.None);
+                                var response = await kibanaClient.GetStatus();
 
                                 string level = response?.Status?.Overall?.Level ?? throw new Exception("Kibana status is not available.");
 
@@ -63,8 +63,10 @@ namespace KiBoards
                         }
                         messageSink.WriteMessage($"Trying to create Kibana space for KiBoards...");
 
+                        var kiboardsId = "kiboards";
+
                         var kiboards = KibanaSpace.Create(
-                            id: "kiboards",
+                            id: kiboardsId,
                             name: GetEnvironmentVariable("KIB_SPACE_NAME", "KiBoards"),
                             initials: GetEnvironmentVariable("KIB_SPACE_INITIALS", "Ki"),
                             color: GetEnvironmentVariable("KIB_SPACE_COLOR", "#000000"),
@@ -89,7 +91,7 @@ namespace KiBoards
 
                         var defaultRoute = GetEnvironmentVariable("KIB_DEFAULT_ROUTE", "/app/dashboards");
                         messageSink.WriteMessage($"Configuring default route to {defaultRoute}");
-                        result = await kibanaClient.SetDefaultRoute(defaultRoute, kiboards.Id, CancellationToken.None);
+                        result = await kibanaClient.SetDefaultRoute(defaultRoute, kiboards.Id);
 
                         if (result.IsSuccessStatusCode)
                             messageSink.WriteMessage($"KiBoards default route configured successfully.");
@@ -100,7 +102,7 @@ namespace KiBoards
                         var darkModeVariable = GetEnvironmentVariable("KIB_DARK_MODE", "0");
                         var darkMode = darkModeVariable == "1" || darkModeVariable.ToLower() == "true";
                         messageSink.WriteMessage($"{(darkMode ? "Enabling" : "Disabling")} Kibana dark mode.");
-                        await kibanaClient.SetDarkModeAsync(darkMode, KibanaSpace.KiBoards.Id, CancellationToken.None);
+                        await kibanaClient.SetDarkModeAsync(darkMode, kiboardsId);
 
                         var ndjsonFiles = Directory.GetFiles(Directory.GetCurrentDirectory(), attribute.SearchPattern);
 
