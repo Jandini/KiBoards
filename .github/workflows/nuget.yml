@@ -29,10 +29,10 @@ jobs:
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
 
     - name: Restore
-      run: dotnet restore            
+      run: dotnet restore KiBoards.sln         
 
     - name: Pack
-      run: dotnet pack --no-restore -c:Release
+      run: dotnet pack KiBoards.sln --no-restore -c:Release
  
     - name: Push
       run: dotnet nuget push "../bin/Release/*.nupkg" -k ${{ secrets.NUGET_ORG_API_KEY }} -s https://api.nuget.org/v3/index.json --skip-duplicate
