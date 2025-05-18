@@ -33,10 +33,10 @@ jobs:
         source-url: https://nuget.pkg.github.com/${{ github.repository_owner }}/index.json
 
     - name: Restore
-      run: dotnet restore
+      run: dotnet restore KiBoards.sln
       
     - name: Pack
-      run: dotnet pack --no-restore -c:Release
+      run: dotnet pack KiBoards.sln --no-restore -c:Release
     
     - name: Push
       # Create packages from every branch except pull requests
