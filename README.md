@@ -17,21 +17,21 @@ In just a few simple steps, you can have your unit test results stored in Elasti
 
 * The initial unit test class will resemble this:
 
-  ```c#
-  [assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
+```c#
+[assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
 
-  namespace Tests
-  {
-      public class UnitTest1
-      {
-          [Fact]
-          public void TestSomething()
-          {
-              // Your test logic goes here
-          }
-      }
-  }
-  ```
+namespace Tests
+{
+    public class UnitTest1
+    {
+        [Fact]
+        public void TestSomething()
+        {
+            // Your test logic goes here
+        }
+    }
+}
+```
 
 
 Now, after your unit tests are executed, the results are saved to the Elasticsearch host defined by the `KIB_ELASTICSEARCH_HOST` variable, with a default value of [http://localhost:9200](http://localhost:9200/).
@@ -41,6 +41,31 @@ You can specify `KIB_KIBANA_HOST` to automatically build Kibana dashboards like 
 ![kiboards](https://github.com/user-attachments/assets/9a908bc0-a700-49dc-8f4a-d2257eff1fe6)
 
 The dashboards are created in separate Kibana's space called KiBoards. 
+
+
+Following code demonstrate how to use Restore customized dashboards, create test startup class that executes constructor before tests run.
+
+```C#
+using System.Reflection;
+using Xunit.Abstractions;
+
+[assembly: KiboardsTestStartup("TestStartup.Startup")]
+[assembly: KiBoardsSavedObjects()]
+[assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
+
+namespace TestStartup;
+
+public class Startup 
+{
+
+    public Startup(IMessageSink messageSink)
+    {
+        // Add variable that will be indexed as "variables.VERSION" into elasticsearch
+        Environment.SetEnvironmentVariable("KIB_VAR_VERSION", Assembly.GetExecutingAssembly().GetCustomAttribute<AssemblyInformationalVersionAttribute>()?.InformationalVersion);            
+    }     
+}
+```
+
 
 ---
 Created from [JandaBox](https://github.com/Jandini/JandaBox)
