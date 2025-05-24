@@ -61,7 +61,7 @@ public class Startup
                     }
                     messageSink.WriteMessage($"Trying to create Kibana space for KiBoards...");
 
-                    var kiboardsId = Environment.GetEnvironmentVariable("KIB_SPACE_NAME")?.Trim() ?? "kiboards";
+                    var kiboardsId = Environment.GetEnvironmentVariable("KIB_SPACE_ID")?.Trim().ToLower() ?? "kiboards";
 
                     var kiboards = KibanaSpace.Create(
                         id: kiboardsId,

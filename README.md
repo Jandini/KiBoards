@@ -70,13 +70,15 @@ public class Startup
         );
 
         // Optionally, configure your own Kibana space by setting these environment variables:
-        // - KIB_SPACE_NAME: Specifies the ID of the Kibana space (default is "kiboards")
+        // - KIB_SPACE_ID: Specifies the ID of the Kibana space (default is "kiboards"). Must be all lowercase letters with no spaces.
+        // - KIB_SPACE_NAME: Human-friendly name for the space (e.g., "My Space")
         // - KIB_SPACE_INITIALS: Specifies the initials for the space (default is "Ki")
         // - KIB_SPACE_COLOR: The color code for the space badge (default is "#000000")
         // - KIB_SPACE_DESCRIPTION: Description of the Kibana space (default is "KiBoards dashboards")
         //
         // For example, to create a space with ID "myspace", you can set:
-        // Environment.SetEnvironmentVariable("KIB_SPACE_NAME", "myspace");
+        // Environment.SetEnvironmentVariable("KIB_SPACE_ID", "myspace");
+        // Environment.SetEnvironmentVariable("KIB_SPACE_NAME", "My Custom Space");
     }     
 }
 ```
@@ -90,7 +92,8 @@ KiBoards uses several environment variables to configure its connection to Elast
 | `KIB_ELASTICSEARCH_HOST`       | `http://localhost:9200`  | The full URL of your Elasticsearch instance where test results are stored. |
 | `KIB_KIBANA_HOST`              | `http://localhost:5601`  | The full URL of your Kibana instance used to build dashboards. |
 | `KIB_KIBANA_ACCEPT_ANY_CERT`   | `false`                  | If set to `"1"` or `"true"`, accepts any SSL certificate (useful for local/test environments with self-signed certificates). |
-| `KIB_SPACE_NAME`               | `kiboards`               | The ID of the Kibana space to be created or updated. Override to configure a custom space (e.g., `"myspace"`). |
+| `KIB_SPACE_ID`                 | `kiboards`               | The **ID** of the Kibana space to be created or updated. Must be lowercase, no spaces. |
+| `KIB_SPACE_NAME`               | `KiBoards`               | The **display name** for the Kibana space (can include spaces and uppercase letters). |
 | `KIB_SPACE_INITIALS`           | `Ki`                     | The initials to display on the space badge within Kibana. |
 | `KIB_SPACE_COLOR`              | `#000000`                | The color code for the space badge in Kibana. |
 | `KIB_SPACE_DESCRIPTION`        | `KiBoards dashboards`    | A brief description of the Kibana space, shown in the Kibana UI. |
@@ -105,7 +108,8 @@ KiBoards uses several environment variables to configure its connection to Elast
    - It repeatedly checks the status of Kibana until it confirms that Kibana is “available.”
 
 2. **Kibana Space Creation/Update:**
-   - A Kibana space is created (or updated if it already exists) using the defined environment variables. The space ID defaults to the value of `KIB_SPACE_NAME` (or `"kiboards"` if not set), and additional properties such as initials, color, and description are configured via their corresponding environment variables.
+   - A Kibana space is created (or updated if it already exists) using the defined environment variables.
+   - The space ID defaults to `KIB_SPACE_ID` (or `"kiboards"` if not set), and additional properties such as name, initials, color, and description are configured via their corresponding variables.
 
 3. **Dashboard Configuration:**
    - After the space is configured, the system sets a default route (`KIB_DEFAULT_ROUTE`) and applies dark mode settings (`KIB_DARK_MODE`) as defined by the environment variables.
@@ -114,10 +118,8 @@ KiBoards uses several environment variables to configure its connection to Elast
 4. **Custom Variables:**
    - You can also set custom variables (e.g., `KIB_VAR_VERSION`) which are indexed into Elasticsearch along with your test results.
 
-
 By adjusting these environment variables, you can tailor KiBoards’ behavior to fit your specific testing and visualization requirements, including configuring a completely customized Kibana space.
 
 ---
 
 This project was created using [JandaBox](https://github.com/Jandini/JandaBox).
-
