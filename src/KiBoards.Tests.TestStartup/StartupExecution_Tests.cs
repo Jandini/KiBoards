@@ -1,6 +1,3 @@
-[assembly: KiboardsTestStartup("TestStartup.Startup")]
-[assembly: KiBoardsSavedObjects()]
-[assembly: TestFramework("KiBoards.TestFramework", "KiBoards.Xunit")]
 
 namespace TestStartup
 {

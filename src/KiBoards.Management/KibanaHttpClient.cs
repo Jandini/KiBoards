@@ -1,13 +1,12 @@
 ﻿using KiBoards.Management.Models.Objects;
 using KiBoards.Management.Models.Settings;
 using KiBoards.Management.Models.Spaces;
-using KiBoards.Management.Models.Status;
 using System.Net.Http.Json;
 using System.Text.Json;
 
 namespace KiBoards.Management;
 
-internal class KibanaHttpClient
+public class KibanaHttpClient
 {
     private readonly HttpClient _httpClient;
     private readonly JsonSerializerOptions _jsonPropertyNameCaseInsensitive = new() { PropertyNameCaseInsensitive = true };
@@ -135,7 +134,7 @@ internal class KibanaHttpClient
     }
 
     public async Task<HttpResponseMessage> UpdateSpaceAsync(KibanaSpace space, CancellationToken cancellationToken = default)
-        => await _httpClient.PutAsJsonAsync($"api/spaces/space/{space.Id}", space, _jsonCamelCasePropertyNamingPolicy, cancellationToken);
+        => await _httpClient.PutAsJsonAsync($"api/spaces/space/{space.Id ?? "default"}", space, _jsonCamelCasePropertyNamingPolicy, cancellationToken);
 
 
     /// <summary>
